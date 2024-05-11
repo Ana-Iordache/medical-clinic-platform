@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex h-100">
         <div class="first_section flex-1-0 align-self-center">
-            <v-img src="../../assets//login.jpg"></v-img>
+            <v-img src="../../assets/login.jpg"></v-img>
         </div>
         <div class="second_section">
             <div class="d-flex flex-column align-center">
@@ -34,14 +34,14 @@
                                 ></v-text-field>
                             </div>
                             <v-text-field
-                                v-model="userData.cnp"
-                                ref="cnp_input"
-                                label="Personal identification (CNP)*"
+                                v-model="userData.identityNumber"
+                                ref="identity_number_input"
+                                label="Identity number (CNP)*"
                                 :rules="[rules.requiredField, rules.thirthteenCharacters]"
                                 type="text"
                                 variant="solo" 
                                 prepend-inner-icon="mdi mdi-card-account-details-outline"
-                                @input="handleOnlyNumbersInput($event, 'cnp')"
+                                @input="handleOnlyNumbersInput($event, 'identityNumber')"
                             ></v-text-field>
                             <v-text-field
                                 v-model="userData.phoneNumber"
@@ -60,6 +60,7 @@
                                 variant="solo" 
                                 prepend-inner-icon="mdi mdi-home"
                             ></v-text-field>
+                            <!-- TODO: first two input should be smaller -->
                             <div class="one_line_inputs">
                                 <v-text-field
                                     v-model="userData.height"
@@ -75,6 +76,13 @@
                                     variant="solo" 
                                     prepend-inner-icon="mdi mdi-weight-kilogram"
                                 ></v-text-field>
+                                <v-select
+                                    v-model="userData.bloodType"
+                                    label="Blood type"
+                                    variant="solo"
+                                    :items="['O', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-']"
+                                    prepend-inner-icon="mdi mdi-blood-bag"
+                                ></v-select>
                             </div>
                         </div>
                     </v-window-item>
@@ -132,23 +140,41 @@
             </div>
         </div>
     </div>
+
+    <v-dialog v-model="showLoadingDialog" max-width="320" persistent>
+        <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+            <v-list-item prepend-icon="mdi-heart-pulse" title="Creating account...">
+                <template v-slot:prepend>
+                    <div class="pe-4">
+                        <v-icon color="primary" size="x-large"></v-icon>
+                    </div>
+                </template>
+
+                <template v-slot:append>
+                    <v-progress-circular color="primary" indeterminate="disable-shrink" size="26" width="3"></v-progress-circular>
+                </template>
+            </v-list-item>
+        </v-list>
+    </v-dialog>
 </template>
 
 <script>
 import generalMixin from "@/commons/mixins";
 import router from "@/router";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default {
     name: 'SignUpForm',
     mixins: [generalMixin],
     data: () => ({
         userData: {
+            role: "patient",
             firstName: "",
             lastName: "",
-            cnp: "",
+            identityNumber: "",
             phoneNumber: "",
             address: "",
-            bloodType: "",
+            bloodType: null,
             height: "",
             weight: "",
             email: "",
@@ -162,14 +188,40 @@ export default {
             containsLowerCaseLetter: { text: "Password must contain at least one lowercase letter.", isValid: false },
             containsUpperCaseLetter: { text: "Password must contain at least one uppercase letter.", isValid: false },
             containsDigit:           { text: "Password must contain at least one digit.",            isValid: false }
-        }
+        },
+        showLoadingDialog: false
     }),
     methods: {
         async submitForm() {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
-                // TODO
+                this.showLoadingDialog = true;
+                await this.signUpUser(this.userData);
+                this.showLoadingDialog = false;
             }
+        },
+
+        async signUpUser(user) {
+            const auth = getAuth();
+            console.log("auth: ", auth)
+            createUserWithEmailAndPassword(auth, user.email, user.password)
+            .then(async () => {
+                console.log("User created successfully in firebase: ", auth.currentUser);
+                await this.addUser(user);
+            })
+            .catch(error => console.error(error));
+        },
+
+        addUser(user) {
+            return new Promise(resolve => {
+                this.axios.post("/users", user)
+                    .then(() => {
+                        // Redirect to home if sigup is successfull
+                        this.$router.push('/home');
+                    })
+                    .catch(error => console.error(error))
+                    .finally(() => resolve());
+            })
         },
 
         handleOnlyNumbersInput(event, inputName) {
@@ -186,10 +238,10 @@ export default {
         async validatePersonalInfoFields() {
             const firstNameIsValid = Object.values(await this.$refs.first_name_input.validate()).length == 0;
             const lastNameIsValid = Object.values(await this.$refs.last_name_input.validate()).length == 0;
-            const cnpIsValid = Object.values(await this.$refs.cnp_input.validate()).length == 0;
+            const identityNumberIsValid = Object.values(await this.$refs.identity_number_input.validate()).length == 0;
             const phoneNumberIsValid = Object.values(await this.$refs.phone_number_input.validate()).length == 0;
 
-            return firstNameIsValid && lastNameIsValid && cnpIsValid && phoneNumberIsValid;
+            return firstNameIsValid && lastNameIsValid && identityNumberIsValid && phoneNumberIsValid;
         },
 
         redirectToLogInForm() {
