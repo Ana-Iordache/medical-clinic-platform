@@ -9,8 +9,8 @@
                 <div class="text-subtitle-1 text-white mt-5">Login to your account</div>
             </div>
 
-            <v-form ref="form" @submit.prevent="submitForm" class="flex-grow-1">
-                <div class="input_credentials_section">
+            <v-form ref="form" @submit.prevent="submitForm" class="flex-grow-1 mt-10">
+                <div class="form_inputs_section">
                     <v-text-field
                         v-model="userData.email"
                         :rules="[rules.requiredField]"
@@ -45,6 +45,11 @@
                     </v-btn>
                 </div>
             </v-form>
+
+            <div class="text-white d-flex justify-center mb-3 pointer_on_hover" @click="redirectToSignUpForm">
+                <p>Don't have an account?</p>
+                <p class="ms-1 font-weight-bold">Sign up</p>
+            </div>
         </div>
     </div>
 
@@ -60,6 +65,7 @@
 
 <script>
 import generalMixin from "@/commons/mixins";
+import router from "@/router";
 import ResetPasswordForm from "@/views/authentication_forms/ResetPassword.vue";
 
 export default {
@@ -94,27 +100,15 @@ export default {
             this.dismissPasswordDialog(true);
             this.resetPassword.emailSent = emailSent;
             this.resetPassword.showEmailConfirmation = true;
+        },
+        redirectToSignUpForm() {
+            router.push({ path: '/sign_up'})
         }
     }
 }
 </script>
 
 <style scoped>
-.second_section {
-    display: flex;
-    flex-direction: column;
-    background: #4091BE;
-    box-shadow: inset 5px 0px 25px 10px rgba(0, 0, 0, 0.2);
-    width: 40%;
-}
-
-.input_credentials_section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 3rem 5rem 0 5rem;
-    margin-top: 2rem;
-}
 
 .forgot_password {
     opacity: 0.6;

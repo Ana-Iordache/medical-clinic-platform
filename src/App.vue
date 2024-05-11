@@ -88,4 +88,24 @@ export default {
   flex-direction: column;
   padding: 2rem;
 }
+
+/** Login and Signup */
+.second_section {
+  display: flex;
+  flex-direction: column;
+  background: #4091BE;
+  box-shadow: inset 5px 0px 25px 10px rgba(0, 0, 0, 0.2);
+  width: 40%;
+}
+
+.form_inputs_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 5rem 0 5rem;
+}
+
+.pointer_on_hover:hover {
+  cursor: pointer;
+}
 </style>
