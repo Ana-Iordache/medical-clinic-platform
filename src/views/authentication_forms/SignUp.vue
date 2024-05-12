@@ -160,7 +160,6 @@
 
 <script>
 import generalMixin from "@/commons/mixins";
-import router from "@/router";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default {
@@ -245,7 +244,7 @@ export default {
         },
 
         redirectToLogInForm() {
-            router.push({ path: '/login'})
+            this.$router.push({ path: '/login'})
         }
     },
 

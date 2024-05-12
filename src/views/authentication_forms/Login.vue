@@ -61,12 +61,27 @@
             </v-card-text>
         </v-card>
     </v-dialog>
+
+    <!-- TODO: style this a little bit better -->
+    <v-dialog v-model="showErrorDialog" persistent width="40%">
+        <v-card class="pa-3 text-center">
+            <v-card-title>Login failed</v-card-title>
+            <v-card-text>
+                {{ errorMessage }}
+            </v-card-text>
+        </v-card>
+    </v-dialog>
+
+    <v-snackbar :timeout="4000" :color="resetPassword.emailSent ? 'green-lighten-1' : 'red-lighten-1'" variant="tonal" v-model="resetPassword.showEmailConfirmation">
+        <v-icon>{{ resetPassword.emailSent ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
+        {{ resetPassword.emailSent ? 'An email to reset your password has been sent' : 'Email to reset password couldn\'t be sent' }}
+    </v-snackbar>
 </template>
 
 <script>
 import generalMixin from "@/commons/mixins";
-import router from "@/router";
 import ResetPasswordForm from "@/views/authentication_forms/ResetPassword.vue";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
     name: 'LoginForm',
@@ -83,15 +98,41 @@ export default {
         resetPassword: {
             showForgotDialog: false,
             showEmailConfirmation: false,
-            emailSent: false,
+            emailSent: false,  
         },
+        errorMessage: "",
+        showErrorDialog: false,
     }),
     methods: {
         async submitForm() {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
-                // TODO
+                await this.loginUser(this.userData);
             }
+        },
+        async loginUser(user) {
+            const auth = getAuth();
+            signInWithEmailAndPassword(auth, user.email, user.password)
+                .then(async () => {
+                    // console.log("User logged in successfully in firebase: ", auth.currentUser);
+                    this.$router.push('/home');
+                })
+                .catch(error => {
+                    // console.error(error);
+                    switch (error.code) {
+                        case 'auth/wrong-password':
+                            this.errorMessage = "Incorrect password";
+                            break;
+                        case 'auth/user-not-found':
+                            this.errorMessage = "No account found";
+                            break;
+                        default:
+                            this.errorMessage = "Invalid credentials";
+                            break;
+                    }
+
+                    this.showErrorDialog = true;
+                });
         },
         dismissPasswordDialog(dismiss) {
             this.resetPassword.showForgotDialog = !dismiss;
@@ -102,9 +143,16 @@ export default {
             this.resetPassword.showEmailConfirmation = true;
         },
         redirectToSignUpForm() {
-            router.push({ path: '/sign_up'})
+            this.$router.push({ path: '/sign_up'})
         }
-    }
+    },
+    watch: {
+        showErrorDialog(newValue) {
+            if (!newValue)
+                return;
+            setTimeout(() => this.showErrorDialog = false, 4000);
+        }
+    },
 }
 </script>
 

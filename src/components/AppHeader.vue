@@ -20,7 +20,7 @@
         <v-list>
           <v-list-item v-for="(item, index) in accountSectionSubItems" :key="index" :to="item.path">
             <v-list-item-title class="d-flex justify-start align-center"
-              @click="item.title == 'Logout' ? logoutUser() : ''">
+              @click="item.title == 'Log out' ? logoutUser() : ''">
               <v-icon left dark>{{ item.icon }}</v-icon>
               <div class="ms-2">{{ item.title }}</div>
             </v-list-item-title>
@@ -32,6 +32,9 @@
 </template>
 
 <script>
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+import { mapStores } from 'pinia';
+import { useAuthenticationStore } from '../pinia_stores/authenticationStore';
 
 export default {
   name: 'AppHeader',
@@ -51,22 +54,44 @@ export default {
       { title: 'Profile', path: '/profile', icon: 'mdi-account-circle' },
       { title: 'Settings', path: '/settings', icon: 'mdi-cog' },
       { title: 'Rate application', path: '/rate_application', icon: 'mdi-star' },
-      { title: 'Log out', path: '/logout', icon: 'mdi-logout' },
+      // { title: 'Log out', path: '/logout', icon: 'mdi-logout' },
     ],
     currentTab: "",
-    currentUserRole: 'doctor' // TODO: get real current user
+    currentUserRole: "",
+    userIsLoggedIn: false,
+    auth: getAuth(),
   }),
 
+  mounted() {
+    this.auth = getAuth();
+
+    onAuthStateChanged(this.auth, async user => {
+      this.userIsLoggedIn = user ? true : false;
+      if (this.userIsLoggedIn) {
+        await this.authenticationStore.setCurrentUser(user.email);
+        this.currentUserRole = this.authenticationStore.user.role;
+        this.accountSectionSubItems[3] = { title: 'Log out', path: '/logout', icon: 'mdi-logout' };
+      } else {
+        this.authenticationStore.removeUser();
+        this.currentUserRole = "";
+        this.accountSectionSubItems[3] = { title: 'Log in', path: '/login', icon: 'mdi-login' };
+      }
+    })
+  },
+
   computed: {
+    ...mapStores(useAuthenticationStore),
     navigationItemsFiltered() {
       return this.userNavigationItems.filter(item => item.userRolesAccess.includes(this.currentUserRole))
     }
   },
 
   methods: {
-    // TODO: logoutUser
     logoutUser() {
-      console.log("logoutUser")
+      signOut(this.auth).then(() => {
+        // console.log("User signed out.");
+        this.$router.push({ path: "/login" })
+      })
     }
   }
 }

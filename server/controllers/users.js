@@ -33,6 +33,19 @@ async function add(req, res) {
 
 }
 
+// GET /users/:userEmail
+async function getByEmail(req, res) {
+    const userEmail = req.params.userEmail;
+
+    const user = await Users.findOne({ email: userEmail });
+    if(user) {
+        res.status(200).json(user);
+    } else {
+        res.status(404).json("User not found.");
+    }
+}
+
 module.exports = { 
     add,
+    getByEmail,
 }
