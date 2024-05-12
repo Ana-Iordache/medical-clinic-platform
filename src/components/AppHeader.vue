@@ -42,19 +42,19 @@ export default {
   data: () => ({
     appTitle: "Medical clinic platform",
     userNavigationItems: [
-      { title: 'Home', path: '/home', userRolesAccess: ['doctor', 'patient'] },
-      { title: 'Patients', path: '/patients', userRolesAccess: ['doctor'] },
-      { title: 'Appointments', path: '/appointments', userRolesAccess: ['doctor', 'patient'] },
-      { title: 'Feedback', path: '/feedback', userRolesAccess: ['doctor'] },
-      { title: 'Earnings', path: '/earnings', userRolesAccess: ['doctor'] },
-      { title: 'Services', path: '/services', userRolesAccess: ['patient'] },
-      { title: 'Payments', path: '/payments', userRolesAccess: ['patient'] },
+      { title: 'Home',          path: '/home',          userRolesAccess: ['doctor', 'patient'], shouldBeLoggedIn: false },
+      { title: 'Patients',      path: '/patients',      userRolesAccess: ['doctor'],            shouldBeLoggedIn: true },
+      { title: 'Doctors',       path: '/doctors',       userRolesAccess: ['patient'],           shouldBeLoggedIn: false },
+      { title: 'Appointments',  path: '/appointments',  userRolesAccess: ['doctor', 'patient'], shouldBeLoggedIn: true },
+      { title: 'Feedback',      path: '/feedback',      userRolesAccess: ['doctor'],            shouldBeLoggedIn: true },
+      { title: 'Earnings',      path: '/earnings',      userRolesAccess: ['doctor'],            shouldBeLoggedIn: true },
+      { title: 'Services',      path: '/services',      userRolesAccess: ['patient'],           shouldBeLoggedIn: false },
+      { title: 'Payments',      path: '/payments',      userRolesAccess: ['patient'],           shouldBeLoggedIn: true },
     ],
     accountSectionSubItems: [
-      { title: 'Profile', path: '/profile', icon: 'mdi-account-circle' },
-      { title: 'Settings', path: '/settings', icon: 'mdi-cog' },
-      { title: 'Rate application', path: '/rate_application', icon: 'mdi-star' },
-      // { title: 'Log out', path: '/logout', icon: 'mdi-logout' },
+      { title: 'Profile',           path: '/profile',           icon: 'mdi-account-circle' },
+      { title: 'Settings',          path: '/settings',          icon: 'mdi-cog' },
+      { title: 'Rate application',  path: '/rate_application',  icon: 'mdi-star' },
     ],
     currentTab: "",
     currentUserRole: "",
@@ -82,7 +82,13 @@ export default {
   computed: {
     ...mapStores(useAuthenticationStore),
     navigationItemsFiltered() {
-      return this.userNavigationItems.filter(item => item.userRolesAccess.includes(this.currentUserRole))
+      let itemsFiltered;
+      if(this.userIsLoggedIn) {
+        itemsFiltered = this.userNavigationItems.filter(item => item.userRolesAccess.includes(this.currentUserRole))
+      } else {
+        itemsFiltered = this.userNavigationItems.filter(item => !item.shouldBeLoggedIn)
+      }
+      return itemsFiltered
     }
   },
 
