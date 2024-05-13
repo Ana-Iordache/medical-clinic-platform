@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex h-100">
         <div class="first_section flex-1-0 align-self-center">
-            <v-img src="../../assets//login.jpg"></v-img>
+            <v-img src="../../assets/login.jpg"></v-img>
         </div>
         <div class="second_section">
             <div class="d-flex flex-column align-center">

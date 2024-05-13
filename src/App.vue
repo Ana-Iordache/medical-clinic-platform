@@ -28,7 +28,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin: 2rem;
+  /* margin: 2rem; */
 }
 
 .form_title {
@@ -38,6 +38,22 @@ export default {
 
 .custom_form {
   margin-top: 2rem;
+}
+
+.page_content_overlay {
+  background: rgba(64, 145, 190, 0.25);
+  box-shadow: 0px 0px 10px 6px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(5px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: 10px 10px 0px 0px;
+  height: 100%;
+  margin: 0 3rem;
+}
+
+.page_title {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 /**
