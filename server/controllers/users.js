@@ -26,7 +26,7 @@ async function add(req, res) {
     try {
         await user.save();
         res.status(200).json("User created successfully.");
-    } catch(err) {
+    } catch (err) {
         console.log("Failed to create user: ", err);
         res.status(500).json("Failed to create user.");
     }
@@ -38,13 +38,30 @@ async function getMany(req, res) {
     const role = req.query.role;
 
     let users;
-    if(role)
-    // TODO: here get only the needed info
-        users = await Users.find({ role: role });
+    if (role) {
+        let projection = {
+            _id: 1,
+            firstName: 1,
+            lastName: 1,
+            profilePhotoUrl: 1,
+            phoneNumber: 1,
+            role: 1,
+        };
+
+        if (role == "doctor") {
+            projection.professionalDegree = 1
+            projection.specialization = 1
+        } else if (role == "patient") {
+            projection.identityNumber = 1
+            projection.lastAppointment = ""
+        }
+
+        users = await Users.find({ role: role }, projection);
+    }
     else
         users = await Users.find({});
 
-    if(users.length > 0) {
+    if (users.length > 0) {
         res.status(200).json(users);
     } else {
         res.status(404).json("Users not found.");
@@ -57,14 +74,14 @@ async function getOne(req, res) {
     const property = req.query.property;
 
     const user = await Users.findOne({ [property]: userInfo });
-    if(user) {
+    if (user) {
         res.status(200).json(user);
     } else {
         res.status(404).json("User not found.");
     }
 }
 
-module.exports = { 
+module.exports = {
     add,
     getMany,
     getOne,
