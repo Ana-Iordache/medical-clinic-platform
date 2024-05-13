@@ -49,6 +49,7 @@ export default {
   border-radius: 10px 10px 0px 0px;
   height: 100%;
   margin: 0 3rem;
+  overflow: auto;
 }
 
 .page_title {
@@ -129,5 +130,29 @@ html {
 
 .pointer_on_hover:hover {
   cursor: pointer;
+}
+
+/* User info */
+/* TODO: something is not ok with overflow here */
+.user_info_card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: auto !important;
+}
+
+.user_info_card .profile_photo_section {
+  width: fit-content;
+}
+
+.user_info_card .info_section {
+  flex-grow: 1;
+  padding: 1rem;
+}
+
+.user_info_card_section {
+  border: 1px solid #c6c6c6;
+  border-radius: .5rem;
+  margin: 1rem;
 }
 </style>

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/views/main_pages/HomePage'
 import UsersList from '@/views/main_pages/UsersList'
+import DoctorInfo from '@/views/secondary_pages/DoctorInfo'
+import PatientInfo from '@/views/secondary_pages/PatientInfo'
 import Appointments from '@/views/main_pages/Appointments'
 import Feedback from '@/views/main_pages/Feedback'
 import Earnings from '@/views/main_pages/Earnings'
@@ -35,8 +37,21 @@ const routes = [
         }
     },
     {
+        path: '/patients/:id',
+        name: 'PatientInfo',
+        component: PatientInfo,
+        meta: {
+            requiredAuth: true
+        }
+    },
+    {
         path: '/doctors',
         component: UsersList
+    },
+    {
+        path: '/doctors/:id',
+        name: 'DoctorInfo',
+        component: DoctorInfo
     },
     {
         path: '/appointments',

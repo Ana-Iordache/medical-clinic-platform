@@ -14,7 +14,7 @@ export const useAuthenticationStore = defineStore('authentication', {
         },
         getCurrentUser(userEmail) {
             return new Promise(resolve => {
-                axios.get(`/users/${userEmail}`)
+                axios.get(`/users/${userEmail}?property=email`)
                     .then(response => response.data)
                     .then(data => {
                         resolve(data);

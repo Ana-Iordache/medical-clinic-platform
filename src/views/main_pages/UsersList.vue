@@ -21,8 +21,8 @@
                 <template v-slot:default="{ items }">
                     <v-container class="pa-2" fluid>
                         <v-row dense>
-                            <v-col v-for="item in items" :key="item._id" cols="auto" md="4">
-                                <v-card class="pb-3" border flat>
+                            <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
+                                <v-card class="pb-3 user_card_info" border flat @click="showUserInfo(item.raw)">
                                     <div class="text-h6 text-center"> {{ item.raw.firstName }} {{ item.raw.lastName }}</div>
 
                                     <div class="user_info_area">
@@ -170,6 +170,18 @@ export default {
         },
         getProfilePhotoUrl(user) {
            return user.profilePhotoUrl ? user.profilePhotoUrl : require('@/assets/user_profile.jpg');
+        },
+        showUserInfo(user) {
+            let componentName;
+            if(user.role == "doctor")
+                componentName = 'DoctorInfo';
+            else if(user.role == "patient")
+                componentName = 'PatientInfo';
+
+            this.$router.push({ 
+                name: componentName,  
+                params: { id: user._id }
+            })
         }
     }
 }
@@ -181,5 +193,9 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+}
+
+.user_card_info:hover {
+    cursor: pointer;
 }
 </style>
