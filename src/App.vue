@@ -29,6 +29,7 @@ export default {
   flex-direction: column;
   flex-grow: 1;
   /* margin: 2rem; */
+  height: 100vh;
 }
 
 .form_title {
@@ -81,6 +82,10 @@ export default {
   background-color: rgb(156, 156, 156);
 }
 
+html {
+  overflow: hidden !important;
+}
+
 /**
 * VMain
 */
@@ -88,7 +93,8 @@ export default {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  /* overflow: auto; */
+  overflow: auto;
+  height: 100vh;
 }
 
 .remember_me_checkbox .v-checkbox-btn {
