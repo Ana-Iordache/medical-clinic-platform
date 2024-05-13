@@ -5,6 +5,7 @@ const users = require('./../controllers/users');
 
 // Users
 router.post('/users', (req, res) => requestHandler(users.add, req, res));
+router.get('/users', (req, res) => requestHandler(users.getMany, req, res));
 router.get('/users/:userEmail', (req, res) => requestHandler(users.getByEmail, req, res));
 
 module.exports = router;

@@ -33,6 +33,23 @@ async function add(req, res) {
 
 }
 
+// GET /users?role=[doctor, patient]
+async function getMany(req, res) {
+    const role = req.query.role;
+
+    let users;
+    if(role)
+        users = await Users.find({ role: role });
+    else
+        users = await Users.find({});
+
+    if(users.length > 0) {
+        res.status(200).json(users);
+    } else {
+        res.status(404).json("Users not found.");
+    }
+}
+
 // GET /users/:userEmail
 async function getByEmail(req, res) {
     const userEmail = req.params.userEmail;
@@ -47,5 +64,6 @@ async function getByEmail(req, res) {
 
 module.exports = { 
     add,
+    getMany,
     getByEmail,
 }
