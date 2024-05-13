@@ -39,6 +39,7 @@ async function getMany(req, res) {
 
     let users;
     if(role)
+    // TODO: here get only the needed info
         users = await Users.find({ role: role });
     else
         users = await Users.find({});
@@ -50,11 +51,12 @@ async function getMany(req, res) {
     }
 }
 
-// GET /users/:userEmail
-async function getByEmail(req, res) {
-    const userEmail = req.params.userEmail;
+// GET /users/:userInfo
+async function getOne(req, res) {
+    const userInfo = req.params.userInfo;
+    const property = req.query.property;
 
-    const user = await Users.findOne({ email: userEmail });
+    const user = await Users.findOne({ [property]: userInfo });
     if(user) {
         res.status(200).json(user);
     } else {
@@ -65,5 +67,5 @@ async function getByEmail(req, res) {
 module.exports = { 
     add,
     getMany,
-    getByEmail,
+    getOne,
 }
