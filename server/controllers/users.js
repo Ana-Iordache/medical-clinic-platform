@@ -1,5 +1,6 @@
 const Users = require('./../models/Users');
 const utils = require('./../commons/utils')
+const aggregates = require('./../commons/aggregates')
 
 // POST /users
 async function add(req, res) {
@@ -51,12 +52,14 @@ async function getMany(req, res) {
         if (role == "doctor") {
             projection.professionalDegree = 1
             projection.specialization = 1
+
+            users = await Users.find({ role: role }, projection);
         } else if (role == "patient") {
             projection.identityNumber = 1
-            projection.lastAppointment = ""
+
+            users = await aggregates.getPatientUsers();
         }
 
-        users = await Users.find({ role: role }, projection);
     }
     else
         users = await Users.find({});
