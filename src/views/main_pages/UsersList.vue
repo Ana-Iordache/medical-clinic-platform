@@ -15,6 +15,7 @@ export default {
     name: 'UsersList',
 
     data: () => ({
+        usersList: []
     }),
 
     computed: {
@@ -47,11 +48,33 @@ export default {
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover'
             }
+        },
+        getUsersUrl() {
+            let url = `/users`;
+            if(this.currentUserRole == "patient")
+                url += `?role=doctor`;
+            else if(this.currentUserRole == "doctor")
+            // TODO: here should be also filtered by appointments (doctors should only see the patients that had at least one appointment with them)
+                url += `?role=patient`;
+            return url;
         }
     },
 
-    mounted() {
-       
+    async mounted() {
+       await this.loadUsers();
+    },
+
+    methods: {
+        loadUsers() {
+            const url = this.getUsersUrl;
+            return new Promise(resolve => {
+                this.axios.get(url)
+                    .then(response => response.data)
+                    .then(data => this.usersList = data)
+                    .catch(error => console.error(error))
+                    .finally(() => resolve());
+            })
+        }
     }
 }
 </script>
