@@ -30,6 +30,7 @@
                         @click:append-inner="showPassword = !showPassword"
                     ></v-text-field>
                 </div>
+                <!-- TODO: implement functionality -->
                 <div class="d-flex flex-row align-center justify-space-between px-10">
                     <v-checkbox
                         class="remember_me_checkbox"
