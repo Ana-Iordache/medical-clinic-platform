@@ -22,7 +22,8 @@
                     <v-container class="pa-2" fluid>
                         <v-row dense>
                             <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
-                                <v-card class="pb-3 user_card_info" border flat @click="showUserInfo(item.raw)">
+                                <!-- TODO: add this to a custom component -->
+                                <v-card class="pb-3 pointer_on_hover" border flat @click="showUserInfo(item.raw)">
                                     <div class="text-h6 text-center"> {{ item.raw.firstName }} {{ item.raw.lastName }}</div>
 
                                     <div class="user_info_area">
@@ -198,9 +199,5 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-}
-
-.user_card_info:hover {
-    cursor: pointer;
 }
 </style>
