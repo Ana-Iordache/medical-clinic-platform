@@ -29,6 +29,7 @@ const routes = [
         path: '/home',
         component: HomePage
     },
+    // TODO: this call should be available only for users with role of doctor
     {
         path: '/patients',
         component: UsersList,
@@ -44,6 +45,7 @@ const routes = [
             requiredAuth: true
         }
     },
+    // TODO: this call should be available only for users with role of patient
     {
         path: '/doctors',
         component: UsersList
