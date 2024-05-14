@@ -14,6 +14,9 @@ const generalMixin = {
         },
         getStringDayOfWeek(number) {
             return this.dayOfWeeks[number];
+        },
+        getValueIfNotEmpty(value) {
+            return value ? value : "-";
         }
     }
 }
