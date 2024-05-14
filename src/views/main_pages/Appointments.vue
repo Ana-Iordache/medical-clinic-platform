@@ -26,6 +26,44 @@
             </div>
 
             <v-divider color="white" class="border-opacity-50 ma-2"></v-divider>
+
+            <v-data-iterator :items="appointmentsList" :items-per-page="6" :search="search">
+                <template v-slot:default="{ items }">
+                    <v-container class="pa-2" fluid>
+                        <v-row dense>
+                            <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
+                                <AppointmentCard :item="item.raw"></AppointmentCard>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </template>
+
+                <template v-slot:footer="{ page, pageCount, prevPage, nextPage }">
+                    <div class="d-flex align-center justify-center pa-4">
+                    <v-btn
+                        :disabled="page === 1"
+                        density="comfortable"
+                        icon="mdi-arrow-left"
+                        variant="tonal"
+                        rounded
+                        @click="prevPage"
+                    ></v-btn>
+
+                    <div class="mx-2 text-caption">
+                        Page {{ page }} of {{ pageCount }}
+                    </div>
+
+                    <v-btn
+                        :disabled="page >= pageCount"
+                        density="comfortable"
+                        icon="mdi-arrow-right"
+                        variant="tonal"
+                        rounded
+                        @click="nextPage"
+                    ></v-btn>
+                    </div>
+                </template>
+            </v-data-iterator>
         </div>
     </div>
 </template>
@@ -33,9 +71,13 @@
 <script>
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
+import AppointmentCard from '@/components/AppointmentCard.vue';
 
 export default {
     name: 'AppointmentsPage',
+    components: {
+        AppointmentCard
+    },
     data: () => ({
         currentTab: 'future',
         search: "",
@@ -79,5 +121,8 @@ export default {
     background: url('../../assets/appointments.jpg') no-repeat;
     background-size: cover;
     height: 100vh;
+
+    /* TODO: this should be set because of the search bar */
+    /* overflow-x: hidden !important; */
 }
 </style>
