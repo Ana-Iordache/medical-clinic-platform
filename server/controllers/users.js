@@ -37,6 +37,7 @@ async function add(req, res) {
 // GET /users?role=[doctor, patient]
 async function getMany(req, res) {
     const role = req.query.role;
+    const doctorEmail = req.query.doctorEmail;
 
     let users;
     if (role) {
@@ -57,11 +58,12 @@ async function getMany(req, res) {
         } else if (role == "patient") {
             projection.identityNumber = 1
 
-            users = await aggregates.getPatientUsers();
+            users = await aggregates.getPatientUsersOfDoctor(doctorEmail);
         }
 
     }
     else
+    // TODO: this should be changed if there will be admins
         users = await Users.find({});
 
     if (users.length > 0) {

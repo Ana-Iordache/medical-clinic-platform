@@ -141,11 +141,10 @@ export default {
         },
         getUsersUrl() {
             let url = `/users`;
-            if(this.currentUserRole == "patient")
+            if(this.$route.path == "/doctors")
                 url += `?role=doctor`;
-            else if(this.currentUserRole == "doctor")
-            // TODO: here should be also filtered by appointments (doctors should only see the patients that had at least one appointment with them)
-                url += `?role=patient`;
+            else if(this.$route.path == "/patients")
+                url += `?role=patient&doctorEmail=${this.authenticationStore.user.email}`;
             return url;
         }
     },

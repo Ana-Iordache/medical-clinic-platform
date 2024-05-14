@@ -1,6 +1,6 @@
 const Users = require('./../models/Users');
 
-async function getPatientUsers() {
+async function getPatientUsersOfDoctor(doctorEmail) {
     return await Users.aggregate([
         {
             $match: {
@@ -21,7 +21,8 @@ async function getPatientUsers() {
                                     "$patientEmail",
                                     "$$userEmail"
                                 ]
-                            }
+                            },
+                            doctorEmail: doctorEmail
                         }
                     },
                     {
@@ -46,23 +47,14 @@ async function getPatientUsers() {
                 role: 1,
                 identityNumber: 1,
                 lastAppointment: {
-                    $cond: {
-                        if: {
-                            $eq: [
-                                {
-                                    $size: "$lastAppointment"
-                                },
-                                0
-                            ]
-                        },
-                        then: null,
-                        else: {
-                            $arrayElemAt: [
-                                "$lastAppointment.dateAndTime",
-                                0
-                            ]
-                        }
-                    }
+                    $arrayElemAt: [ "$lastAppointment.dateAndTime", 0 ]
+                }
+            }
+        },
+        {
+            $match: {
+                lastAppointment: {
+                    $ne: null
                 }
             }
         }
@@ -70,5 +62,5 @@ async function getPatientUsers() {
 }
 
 module.exports = {
-    getPatientUsers,
+    getPatientUsersOfDoctor,
 }
