@@ -49,7 +49,8 @@ export default {
   border-radius: 10px 10px 0px 0px;
   height: 100%;
   margin: 0 3rem;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .page_title {
