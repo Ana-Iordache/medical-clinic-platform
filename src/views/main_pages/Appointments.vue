@@ -32,7 +32,7 @@
                     <v-container class="pa-2" fluid>
                         <v-row dense>
                             <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
-                                <AppointmentCard :item="item.raw"></AppointmentCard>
+                                <AppointmentCard :item="item.raw" :userRole="currentUserConnected.role"></AppointmentCard>
                             </v-col>
                         </v-row>
                     </v-container>
