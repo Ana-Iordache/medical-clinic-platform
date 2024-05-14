@@ -2,22 +2,22 @@
     <div ref="users_list_container" id="users_list_container" :style="containerStyle" class="page_container">
         <div class="text-h4 page_title"> {{ pageTitle }} </div>
         <div class="page_content_overlay">
-            <v-data-iterator :items="usersList" :items-per-page="6" :search="search">
-                <template v-slot:header>
-                    <v-toolbar class="px-2" color="transparent">
-                        <v-text-field
-                            v-model="search"
-                            density="comfortable"
-                            placeholder="Search"
-                            prepend-inner-icon="mdi-magnify"
-                            style="max-width: 300px"
-                            variant="solo"
-                            clearable
-                            hide-details
-                        ></v-text-field>
-                    </v-toolbar>
-                </template>
+            <v-toolbar class="px-4" color="transparent">
+                <v-text-field
+                    v-model="search"
+                    density="comfortable"
+                    placeholder="Search"
+                    prepend-inner-icon="mdi-magnify"
+                    style="max-width: 300px"
+                    variant="solo"
+                    clearable
+                    hide-details
+                ></v-text-field>
+            </v-toolbar>
 
+            <v-divider color="white" class="border-opacity-50 ma-2"></v-divider>
+
+            <v-data-iterator :items="usersList" :items-per-page="6" :search="search">
                 <template v-slot:default="{ items }">
                     <v-container class="pa-2" fluid>
                         <v-row dense>

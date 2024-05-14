@@ -3,21 +3,21 @@
         <div class="text-h4 page_title"> Appointments </div>
         <div class="page_content_overlay">
             <div class="d-flex flex-row justify-space-between">
-                <v-btn class="ma-3" :variant="currentTab == 'history' ? 'tonal' : 'text'" @click="changeTab('history')">
-                    History
-                </v-btn>
-                <v-btn class="ma-3" :variant="currentTab == 'future' ? 'tonal' : 'text'" @click="changeTab('future')">
-                    Future
-                </v-btn>
-
-                <!-- TODO: move this to the right -->
-                <v-toolbar color="transparent">
+                <v-toolbar color="transparent" class="px-4">
+                    <div>
+                        <v-btn class="me-1" :variant="currentTab == 'history' ? 'tonal' : 'text'" @click="changeTab('history')">
+                            History
+                        </v-btn>
+                        <v-btn class="ms-1" :variant="currentTab == 'future' ? 'tonal' : 'text'" @click="changeTab('future')">
+                            Future
+                        </v-btn>
+                    </div>
                     <v-text-field
                         v-model="search"
                         density="comfortable"
                         placeholder="Search"
                         prepend-inner-icon="mdi-magnify"
-                        style="max-width: 300px"
+                        max-width="300px"
                         variant="solo"
                         clearable
                         hide-details
