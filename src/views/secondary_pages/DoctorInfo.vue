@@ -1,5 +1,5 @@
 <template>
-    <div ref="users_list_container" id="doctor_info_container" class="page_container">
+    <div id="doctor_info_container" class="page_container">
         <div class="text-h4 page_title"> {{ doctorFullName }} </div>
         <div class="page_content_overlay">
             <v-btn class="ma-3" prepend-icon="mdi mdi-chevron-left" @click="goBackToDoctorsList()">
