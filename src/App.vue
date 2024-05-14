@@ -156,4 +156,10 @@ html {
   border-radius: .5rem;
   margin: 1rem;
 }
+
+.v-toolbar__content {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 </style>
