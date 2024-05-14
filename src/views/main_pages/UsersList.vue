@@ -102,7 +102,7 @@ export default {
         ],
         patientUserInfo: [
             { title: "CNP",              key: "identityNumber" },
-            { title: "Last appointment", key: "lastAppointment" }, // TODO: get last appointment in BE
+            { title: "Last appointment", key: "lastAppointment" },
             { title: "Phone",            key: "phoneNumber" }
         ]
     }),
