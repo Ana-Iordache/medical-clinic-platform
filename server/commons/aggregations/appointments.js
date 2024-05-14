@@ -60,7 +60,7 @@ async function getAppointmentsForDoctor(email) {
             status: 1,
             prescriptionUrl: 1,
             patientFullName: {
-                $concat: [ "$doctorDetails.firstName", " ", "$doctorDetails.lastName" ]
+                $concat: [ "$patientDetails.firstName", " ", "$patientDetails.lastName" ]
             }
           }
         }
