@@ -27,7 +27,12 @@
 
             <v-divider color="white" class="border-opacity-50 ma-2"></v-divider>
 
-            <v-data-iterator :items="appointmentsList" :items-per-page="6" :search="search">
+            <div v-if="appointmentsFiltered.length == 0" class="d-flex flex-column align-center justify-center mt-4">
+                <div class="text-subtitle-2">No appointments found.</div>
+                <v-icon size="70" class="mt-4">mdi-calendar-remove</v-icon>
+            </div>
+
+            <v-data-iterator v-else :items="appointmentsFiltered" :items-per-page="6" :search="search">
                 <template v-slot:default="{ items }">
                     <v-container class="pa-2" fluid>
                         <v-row dense>
@@ -72,9 +77,11 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
 import AppointmentCard from '@/components/AppointmentCard.vue';
+import generalMixin from '@/commons/mixins';
 
 export default {
     name: 'AppointmentsPage',
+    mixins: [generalMixin],
     components: {
         AppointmentCard
     },
@@ -91,6 +98,12 @@ export default {
         ...mapStores(useAuthenticationStore),
         currentUserConnected() {
             return this.authenticationStore.user;
+        },
+        appointmentsFiltered() {
+            return this.currentTab == "future" ? 
+                this.appointmentsList.filter(ap => this.parseDateAndTimeString(ap.dateAndTime) > new Date()) :
+                this.appointmentsList.filter(ap => this.parseDateAndTimeString(ap.dateAndTime) <= new Date());
+            
         }
     },
     watch: {
