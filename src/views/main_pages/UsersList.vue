@@ -150,15 +150,21 @@ export default {
     },
 
     async mounted() {
-        // TODO: when page is refreshed, the pinia store is loaded after mounted. FIX THIS
-       await this.loadUsers();
+        if(this.currentUserRole)
+            await this.loadUsers();
+    },
+
+    watch: {
+        async currentUserRole(newRole) {
+            if(newRole) {
+                await this.loadUsers();
+            }
+        }
     },
 
     methods: {
         loadUsers() {
             const url = this.getUsersUrl;
-            console.log("DEBUG currentUserRole: ", this.currentUserRole)
-            console.log("DEBUG url: ", url)
             return new Promise(resolve => {
                 this.axios.get(url)
                     .then(response => response.data)
