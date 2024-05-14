@@ -129,13 +129,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #appointment_container {
     background: url('../../assets/appointments.jpg') no-repeat;
     background-size: cover;
     height: 100vh;
-
-    /* TODO: this should be set because of the search bar */
-    /* overflow-x: hidden !important; */
 }
 </style>
