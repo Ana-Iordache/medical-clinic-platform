@@ -1,6 +1,6 @@
 <template>
     <v-card prepend-icon="mdi-calendar" title="Add new appointment">
-        <!-- TODO: split the steps intro separate components -->
+        <!-- TODO: split the steps into separate components -->
         <v-stepper v-model="currentStepNo" :items="steps" show-actions>
             <template v-slot:[`item.1`]>
                 <div class="text-subtitle-2 mb-2">Choose specialization and doctor</div>
