@@ -13,7 +13,13 @@
                         </v-btn>
                     </div>
                     <div class="d-flex align-center">
-                        <v-btn class="me-2" variant="outlined" append-icon="mdi-calendar-plus" color="#4091BE" @click="openAddAppointmentDialog(true)">Add</v-btn>
+                        <v-btn v-if="currentUserConnected.role == 'patient'" 
+                            class="me-2" 
+                            variant="outlined" 
+                            append-icon="mdi-calendar-plus" 
+                            color="#4091BE" 
+                            @click="openAddAppointmentDialog(true)"
+                        >Add</v-btn>
                         <v-text-field
                             v-model="search"
                             density="comfortable"
