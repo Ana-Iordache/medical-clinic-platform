@@ -1,12 +1,12 @@
 <template>
-  <v-toolbar class="sticky_header">
+  <v-toolbar class="sticky_header" color="#4091BE">
     <v-toolbar-title>
-      <router-link :to="'/home'">
+      <router-link :to="'/home'" class="text-white">
         {{ appTitle }}
       </router-link>
     </v-toolbar-title>
 
-    <v-toolbar-items class="hidden-xs-only">
+    <v-toolbar-items class="hidden-xs-only" color="white">
       <v-btn flat v-for="item in navigationItemsFiltered" :key="item.title" :to="item.path">
         {{ item.title }}
       </v-btn>
