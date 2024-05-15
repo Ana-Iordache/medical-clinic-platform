@@ -5,23 +5,26 @@
             <div class="d-flex flex-row justify-space-between">
                 <v-toolbar color="transparent" class="px-4">
                     <div>
-                        <v-btn class="me-1" :variant="currentTab == 'history' ? 'tonal' : 'text'" @click="changeTab('history')">
+                        <v-btn class="me-1" color="#4091BE" :variant="currentTab == 'history' ? 'tonal' : 'text'" @click="changeTab('history')">
                             History
                         </v-btn>
-                        <v-btn class="ms-1" :variant="currentTab == 'future' ? 'tonal' : 'text'" @click="changeTab('future')">
+                        <v-btn class="ms-1" color="#4091BE" :variant="currentTab == 'future' ? 'tonal' : 'text'" @click="changeTab('future')">
                             Future
                         </v-btn>
                     </div>
-                    <v-text-field
-                        v-model="search"
-                        density="comfortable"
-                        placeholder="Search"
-                        prepend-inner-icon="mdi-magnify"
-                        max-width="300px"
-                        variant="solo"
-                        clearable
-                        hide-details
-                    ></v-text-field>
+                    <div class="d-flex align-center">
+                        <v-btn class="me-2" variant="outlined" append-icon="mdi-calendar-plus" color="#4091BE" @click="openAddAppointmentDialog(true)">Add</v-btn>
+                        <v-text-field
+                            v-model="search"
+                            density="comfortable"
+                            placeholder="Search"
+                            prepend-inner-icon="mdi-magnify"
+                            width="300px"
+                            variant="solo"
+                            clearable
+                            hide-details
+                        ></v-text-field>
+                    </div>
                 </v-toolbar>
             </div>
 
@@ -71,24 +74,31 @@
             </v-data-iterator>
         </div>
     </div>
+
+    <v-dialog v-model="showAddAppointmentDialog" max-width="80%">
+        <AddNewAppointmentCard></AddNewAppointmentCard>
+    </v-dialog>
 </template>
 
 <script>
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
 import AppointmentCard from '@/components/AppointmentCard.vue';
+import AddNewAppointmentCard from '@/components/AddNewAppointmentCard.vue';
 import generalMixin from '@/commons/mixins';
 
 export default {
     name: 'AppointmentsPage',
     mixins: [generalMixin],
     components: {
-        AppointmentCard
+        AppointmentCard,
+        AddNewAppointmentCard
     },
     data: () => ({
         currentTab: 'future',
         search: "",
-        appointmentsList: []
+        appointmentsList: [],
+        showAddAppointmentDialog: false
     }),
     async mounted() {
         if(this.currentUserConnected)
@@ -124,6 +134,9 @@ export default {
                     .catch(error => console.error(error))
                     .finally(() => resolve());
             })
+        },
+        openAddAppointmentDialog(show) {
+            this.showAddAppointmentDialog = show;
         }
     }
 }

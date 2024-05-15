@@ -42,6 +42,29 @@ const generalMixin = {
          */
         getDateStringFromDate(date) {
             return `${date.getDate()} ${this.months[date.getMonth()]} ${date.getFullYear()}`
+        },
+        /**
+         * Parses the hour reveiced as a parameter (in format HH:MM) to a date.
+         * @param {String} timeString should be in format HH:MM
+         * @returns The current date with hours parsed from timeString.
+         */
+        parseTimeToDate(timeString) {
+            const [hours, minutes] = timeString.split(':').map(num => parseInt(num));
+            const currentTime = new Date();
+            currentTime.setHours(hours);
+            currentTime.setMinutes(minutes);
+            currentTime.setSeconds(0);
+            return currentTime;
+        },
+        /**
+         * Formats the time as 'HH:MM' string from a date.
+         * @param {Date} date 
+         * @returns The time from date as a string in format 'HH:MM'
+         */
+        formatTimeFromDate(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
         }
     }
 }
