@@ -28,7 +28,7 @@
             </template>
             <template v-slot:[`item.2`]>
                 <div class="text-subtitle-2 mb-2">Choose date and time</div>
-                <div v-if="!specializationSelected || !doctorSelected"> Please select doctor first. </div>
+                <div v-if="!specializationSelected || !doctorSelected"> Please select a doctor first. </div>
                 <div v-else class="first_section">
                     <!-- TODO: style this schedule section -->
                     <div class="schedule_subsection">
@@ -77,7 +77,10 @@
                             <v-col v-if="selectedOutOfScheduleDate">
                                 Doctor doesn't have work hours on {{  getStringDayOfWeek(dateSelected.getDay()) }}s.
                             </v-col>
-                            <v-col v-else-if="dateSelected && availableHours.length == 0">
+                            <v-col v-else-if="!dateSelected">
+                                Please select a date.
+                            </v-col>
+                            <v-col v-else-if="availableHours.length == 0">
                                 No available hours.
                             </v-col>
                             <v-col v-else>
