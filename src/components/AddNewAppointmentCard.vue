@@ -137,6 +137,12 @@ export default {
     components: {
         VDateInput
     },
+    props: {
+        patientEmail: {
+            type: String,
+            required: true
+        }
+    },
     data: () => ({
         currentStepNo: 1,
         steps: ["Specialization", "Date and time", "Confirmation"],
@@ -173,7 +179,7 @@ export default {
         },
         amountToPay() {
             let investigation = this.investigations.find(investigation => investigation.name == this.investigationSelected);
-            return `${investigation.price} RON`;
+            return investigation.price;
         },
         appointmentDetails() {
             let details = [
@@ -181,7 +187,7 @@ export default {
                 { title: "Investigation",  value: this.investigationSelected },
                 { title: "Doctor",         value: this.doctorSelected },
                 { title: "Date and time",  value: `${this.getDateStringFromDate(this.dateSelected)} ${this.timeSelected}` },
-                { title: "Amount to pay",  value: this.amountToPay },
+                { title: "Amount to pay",  value: `${this.amountToPay} RON` },
             ]
             return details;
         }
@@ -275,14 +281,32 @@ export default {
         selectTime(time) {
             this.timeSelected = time;
         },
-        confirmAppointment() {
-
+        async confirmAppointment() {
+            const appointment = {
+                doctorEmail: this.doctorSelectedInfo.email,
+                date: this.getStringFormatOfDate(this.dateSelected),
+                time: this.timeSelected,
+                amount: this.amountToPay
+            }
+            
+            await this.addAppointment(appointment);
         },
         confirmAndPayAppointment() {
 
         },
         cancel() {
             this.$emit("appointment-creation-canceled");
+        },
+        // TODO: add confirmation snackbar or dialog
+        addAppointment(appointment) {
+            return new Promise(resolve => {
+                this.axios.post(`/users/${this.patientEmail}/appointments`, appointment)
+                    .then(() => {
+                        console.log("added")
+                    })
+                    .catch(error => console.error(error))
+                    .finally(() => resolve())
+            })
         }
     },
     watch: {

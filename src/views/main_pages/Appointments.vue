@@ -13,7 +13,7 @@
                         </v-btn>
                     </div>
                     <div class="d-flex align-center">
-                        <v-btn v-if="currentUserConnected.role == 'patient'" 
+                        <v-btn v-if="currentUserConnected && currentUserConnected.role == 'patient'" 
                             class="me-2" 
                             variant="outlined" 
                             append-icon="mdi-calendar-plus" 
@@ -82,7 +82,8 @@
     </div>
 
     <v-dialog v-model="showAddAppointmentDialog" max-width="80%">
-        <AddNewAppointmentCard @appointment-creation-canceled="openAddAppointmentDialog(false)"></AddNewAppointmentCard>
+        <AddNewAppointmentCard @appointment-creation-canceled="openAddAppointmentDialog(false)"
+            :patientEmail="currentUserConnected.email"></AddNewAppointmentCard>
     </v-dialog>
 </template>
 

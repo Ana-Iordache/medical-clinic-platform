@@ -59,8 +59,24 @@ function extractGenderFromIdentityNumber(idNumber) {
     return gender;
 }
 
+/**
+ * Set the time for a date.
+ * @param {String} dateString 
+ * @param {String} stringTime 
+ */
+function setTimeForDate(dateString, stringTime) {
+    const date = new Date(dateString);
+    const [hours, minutes] = stringTime.split(':').map(num => parseInt(num));
+    date.setHours(hours + 3);
+    date.setMinutes(minutes);
+    // TODO: check if it is ok to add 3 hours, because date is in UTC
+    // but when parse to string is in EEST and ir is correct
+    return date;
+}
+
 module.exports = {
     extractBirthdateFromIdentityNumber,
     extractAgeFromBirthdate,
-    extractGenderFromIdentityNumber
+    extractGenderFromIdentityNumber,
+    setTimeForDate
 }
