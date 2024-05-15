@@ -76,7 +76,7 @@
     </div>
 
     <v-dialog v-model="showAddAppointmentDialog" max-width="80%">
-        <AddNewAppointmentCard></AddNewAppointmentCard>
+        <AddNewAppointmentCard @appointment-creation-canceled="openAddAppointmentDialog(false)"></AddNewAppointmentCard>
     </v-dialog>
 </template>
 

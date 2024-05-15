@@ -98,7 +98,28 @@
                 </div>
             </template>
             <template v-slot:[`item.3`]>
-                <div class="text-subtitle-2 mb-2">Confirm appointment</div>
+                <div class="text-subtitle-2 mb-2">Confirm your appointment</div>
+                <div v-if="!dateSelected || !timeSelected || !investigationSelected"> 
+                    Please select the date, time and an investigation first. 
+                </div>
+                <div v-else class="d-flex">
+                    <v-list class="appointment_details_area">
+                        <v-list-item v-for="(detail, index) in appointmentDetails" :key="index"
+                            :title="detail.title" :subtitle="detail.value"></v-list-item>
+                    </v-list>
+                    <div class="buttons_area">
+                        <!-- TODO: confirm and pay appointment buttons -->
+                        <v-btn variant="tonal" color="#4091BE" @click="confirmAppointment()">
+                            Confirm
+                        </v-btn>
+                        <v-btn variant="tonal" color="#4091BE" @click="confirmAndPayAppointment()">
+                            Confirm and pay {{ amountToPay }}
+                        </v-btn>
+                        <v-btn variant="tonal" @click="cancel()">
+                            Cancel
+                        </v-btn>
+                    </div>
+                </div>
             </template>
         </v-stepper>
     </v-card>
@@ -111,6 +132,7 @@ import { VDateInput } from 'vuetify/labs/VDateInput'
 export default {
     name: "AddNewAppointmentCard",
     mixins: [generalMixin],
+    emits: ["appointment-creation-canceled"],
     components: {
         VDateInput
     },
@@ -147,6 +169,20 @@ export default {
         investigations() {
             let specializationSelected = this.servicesList.find(service => service.name == this.specializationSelected);
             return specializationSelected.investigations;
+        },
+        amountToPay() {
+            let investigation = this.investigations.find(investigation => investigation.name == this.investigationSelected);
+            return `${investigation.price} RON`;
+        },
+        appointmentDetails() {
+            let details = [
+                { title: "Specialization", value: this.specializationSelected },
+                { title: "Investigation",  value: this.investigationSelected },
+                { title: "Doctor",         value: this.doctorSelected },
+                { title: "Date and time",  value: `${this.getDateStringFromDate(this.dateSelected)} ${this.timeSelected}` },
+                { title: "Amount to pay",  value: this.amountToPay },
+            ]
+            return details;
         }
     },
     methods: {
@@ -237,6 +273,15 @@ export default {
         },
         selectTime(time) {
             this.timeSelected = time;
+        },
+        confirmAppointment() {
+
+        },
+        confirmAndPayAppointment() {
+
+        },
+        cancel() {
+            this.$emit("appointment-creation-canceled");
         }
     },
     watch: {
@@ -283,7 +328,14 @@ ul {
     text-wrap: nowrap;
 }
 
-.v-col {
-    margin: 0;
+.buttons_area {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: 1rem;
+}
+
+.appointment_details_area {
+    flex-basis: 100%;
 }
 </style>
