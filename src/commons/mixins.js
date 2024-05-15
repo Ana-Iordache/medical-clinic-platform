@@ -28,7 +28,7 @@ const generalMixin = {
             return new Date(dateAndTimeString);
         },
         /**
-         * 
+         * TODO: this is the same as formatTimeFromDate
          * @param {Date} date 
          * @returns A string with time form a date in format "hh:mm"
          */
