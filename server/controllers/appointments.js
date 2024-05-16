@@ -30,11 +30,16 @@ async function add(req, res) {
 
     const dateAndTime = setTimeForDate(date, time);
 
-    // TODO: set dates of the invoice
     const currentDate = new Date();
+    const dateOfIssue = new Date(currentDate.toISOString());
+
+    // add 30 days to current date to get the due date
+    currentDate.setDate(currentDate.getDate() + 30);
+    const dueDate = new Date(currentDate.toISOString());
+
     const invoice = {
-        dateOfIssue: "todo",
-        dueDate: "todo",
+        dateOfIssue: dateOfIssue,
+        dueDate: dueDate,
         status: "unpaid",
         amount: amount
     }
