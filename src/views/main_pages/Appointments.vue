@@ -46,7 +46,10 @@
                     <v-container class="pa-2" fluid>
                         <v-row dense>
                             <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
-                                <AppointmentCard :item="item.raw" :userRole="currentUserConnected.role"></AppointmentCard>
+                                <AppointmentCard :isInFuture="currentTab == 'future'" 
+                                    :item="item.raw" 
+                                    :userRole="currentUserConnected.role"
+                                    @cancel-appointment="onCancelAppointment"></AppointmentCard>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -94,6 +97,18 @@
         <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
         {{ confirmation.message }}
     </v-snackbar>
+
+    <v-dialog v-model="cancelAppointmentDialog.show" width="80%">
+        <v-card class="pa-3 text-center">
+            <v-card-title>Are you sure you want to cancel this appointment?</v-card-title>
+            <v-spacer></v-spacer>
+
+            <v-card-actions class="align-self-center">
+                <v-btn variant="tonal" color="teal-darken-1" text="Yes" @click="cancelAppointment"></v-btn>
+                <v-btn variant="tonal" text="No" @click="openCancelAppointmentDialog(false)"></v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -120,6 +135,10 @@ export default {
             success: true,
             message: ""
         },
+        cancelAppointmentDialog: {
+            show: false,
+            id: null
+        }
     }),
     async mounted() {
         if(this.currentUserConnected)
@@ -159,6 +178,9 @@ export default {
         openAddAppointmentDialog(show) {
             this.showAddAppointmentDialog = show;
         },
+        openCancelAppointmentDialog(show) {
+            this.cancelAppointmentDialog.show = show;
+        },
         async appointmentAdded(confirmation, message) {
             this.confirmation = {
                 show: true,
@@ -172,6 +194,14 @@ export default {
             if(confirmation) {
                 await this.loadAppointments();
             }
+        },
+        onCancelAppointment(appointmentId) {
+            this.cancelAppointmentDialog.id = appointmentId
+            this.openCancelAppointmentDialog(true);
+        },
+        cancelAppointment() {
+            console.log("appintment to cancel: ", this.cancelAppointmentDialog.id)
+            this.openCancelAppointmentDialog(false);
         }
     }
 }

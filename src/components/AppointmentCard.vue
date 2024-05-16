@@ -1,6 +1,13 @@
 <template>
     <v-card class="pb-3 pointer_on_hover" border flat>
-        <div class="text-h6 text-center mt-2"> {{ cardTitle }} </div>
+        <div v-if="isInFuture" class="d-flex justify-end mt-2 me-2">
+            <v-icon color="red" 
+                @click="cancelAppointment" 
+                title="Cancel appointment"
+            >mdi-calendar-remove</v-icon>
+        </div>
+
+        <div class="text-h6 text-center"> {{ cardTitle }} </div>
 
         <div class="d-flex flex-row justify-space-around ma-2">
             <div class="d-inline-flex">
@@ -29,7 +36,7 @@
         </div>
 
         <!-- TODO: Prescription and Feedback -->
-        <div v-if="userRole == 'patient'" class="d-flex flex-row justify-space-around flex-grow-1">
+        <div v-if="userRole == 'patient'" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap">
             <v-btn variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadPrescription(item.prescriptionUrl)">
                 Prescription
             </v-btn>
@@ -53,6 +60,7 @@ import generalMixin from '@/commons/mixins';
 export default {
     name: "AppointmentCard",
     mixins: [generalMixin],
+    emits: ["cancel-appointment"],
     props: {
         item: {
             type: Object,
@@ -61,6 +69,10 @@ export default {
         userRole: {
             type: String,
             required: true
+        },
+        isInFuture: {
+            type: Boolean,
+            default: true
         }
     },
     computed: {
@@ -99,6 +111,9 @@ export default {
         },
         openFeedbackDialog() {
             console.log("TODO openFeedbackDialog")
+        },
+        cancelAppointment() {
+            this.$emit("cancel-appointment", this.item._id);
         }
     }
 }
