@@ -61,7 +61,23 @@ async function add(req, res) {
     }
 }
 
+// PATCH /appointments/:appointmentId
+async function updateById(req, res) {
+    const appointmentId = req.params.appointmentId;
+    const { field, value } = req.body;
+    const appointmentUpdated = await Appointments.findOneAndUpdate({ _id: appointmentId }, { [field]: value }, { new: true });
+
+    if(appointmentUpdated) {
+        console.log("Appointment updated: ", appointmentUpdated);
+        res.status(200).json({ message: "Appointment updated successfully." });
+    } else {
+        console.log("Failed to update appointment: ", err);
+        res.status(500).json({ message: "Failed to update appointment." });
+    }
+}
+
 module.exports = {
     getMany,
-    add
+    add,
+    updateById
 }

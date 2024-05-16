@@ -14,6 +14,7 @@ router.get('/users/:userInfo', (req, res) => requestHandler(users.getOne, req, r
 // Appointments
 router.get('/users/:userEmail/appointments', (req, res) => requestHandler(appointments.getMany, req, res));
 router.post('/users/:userEmail/appointments', (req, res) => requestHandler(appointments.add, req, res));
+router.patch('/appointments/:appointmentId', (req, res) => requestHandler(appointments.updateById, req, res));
 
 // Invoices
 router.get('/users/:userEmail/payments', (req, res) => requestHandler(invoices.getPaymentsOfUser, req, res))
