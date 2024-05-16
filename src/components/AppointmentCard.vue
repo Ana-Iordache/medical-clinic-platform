@@ -41,13 +41,14 @@
         </div>
 
         <!-- TODO: Prescription and Feedback -->
-        <div v-if="userRole == 'patient' && !isInFuture" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap mt-2">
+        <div v-if="userRole == 'patient' && !isInFuture" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap">
             <v-btn :variant="hasPrescription ? 'tonal' : 'outlined'" 
                 color="#4091BE" 
                 append-icon="mdi mdi-download" 
                 @click="downloadPrescription(item.prescriptionUrl)" 
                 title="Download prescription"
-                :disabled="!hasPrescription">
+                :disabled="!hasPrescription"
+                class="flex-grow-1 ma-2">
                 Prescription
             </v-btn>
             <v-btn :disabled="isCanceled" 
@@ -55,7 +56,8 @@
                 color="#4091BE" 
                 append-icon="mdi mdi-star" 
                 @click="openFeedbackDialog(true)" 
-                title="Give feedback">
+                title="Give feedback"
+                class="flex-grow-1 ma-2">
                 Feedback
             </v-btn>
         </div>
@@ -160,7 +162,7 @@ export default {
             return this.item.status == 'canceled';
         },
         hasFeedback() {
-            return this.item.feedback;
+            return  Object.prototype.hasOwnProperty.call(this.item, 'feedback');
         },
         hasPrescription() {
             return this.item.prescriptionUrl;
