@@ -24,12 +24,13 @@ async function add(req, res) {
         gender: gender
     })
 
-    try {
-        await user.save();
-        res.status(200).json("User created successfully.");
-    } catch (err) {
+    const userAdded = await user.save();
+    if(userAdded) {
+        console.log("User added: ", userAdded);
+        res.status(200).json({ message: "User created successfully." });
+    } else {
         console.log("Failed to create user: ", err);
-        res.status(500).json("Failed to create user.");
+        res.status(500).json({ message: "Failed to create user." });
     }
 
 }

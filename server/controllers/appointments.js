@@ -52,10 +52,11 @@ async function add(req, res) {
         invoice: invoice
     })
 
-    try {
-        await appointment.save();
+    const appointmentAdded = await appointment.save();
+    if(appointmentAdded) {
+        console.log("Appointment added: ", appointmentAdded);
         res.status(200).json({ message: "Appointment added successfully." });
-    } catch (err) {
+    } else {
         console.log("Failed to create appointment: ", err);
         res.status(500).json({ message: "Failed to add appointment." });
     }
