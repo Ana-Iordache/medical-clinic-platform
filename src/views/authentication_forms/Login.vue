@@ -73,7 +73,7 @@
         </v-card>
     </v-dialog>
 
-    <v-snackbar :timeout="4000" :color="resetPassword.emailSent ? 'green-lighten-1' : 'red-lighten-1'" variant="tonal" v-model="resetPassword.showEmailConfirmation">
+    <v-snackbar :timeout="4000" :color="resetPassword.emailSent ? 'green-lighten-1' : 'red-lighten-1'" elevation="24" v-model="resetPassword.showEmailConfirmation">
         <v-icon>{{ resetPassword.emailSent ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
         {{ resetPassword.emailSent ? 'An email to reset your password has been sent' : 'Email to reset password couldn\'t be sent' }}
     </v-snackbar>
