@@ -118,8 +118,7 @@ export default {
     },
 
     async mounted() {
-        if(this.currentUserRole)
-            await this.loadUsers();
+        await this.loadUsers();
     },
 
     watch: {
