@@ -109,7 +109,6 @@
                             :title="detail.title" :subtitle="detail.value"></v-list-item>
                     </v-list>
                     <div class="buttons_area">
-                        <!-- TODO: confirm and pay appointment buttons -->
                         <v-btn variant="tonal" color="#4091BE" @click="confirmAppointment()">
                             Confirm
                         </v-btn>
@@ -291,6 +290,7 @@ export default {
             
             await this.addAppointment(appointment);
         },
+        //TODO: confirm and pay appointment
         confirmAndPayAppointment() {
 
         },
