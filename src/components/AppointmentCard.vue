@@ -189,9 +189,25 @@ export default {
                     return "text-orange";
             }
         },
+
+        // TODO: it doesn't download it, it opens in a tab
         downloadPrescription(url) {
-            console.log("TODO: downloadPrescription ", url)
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.setAttribute('download', '');
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         },
+
+        // cors policy
+        // getPrescriptionFile(url) {
+        //     return new Promise(resolve => {
+        //         this.axios.get(url)
+        //         .then((response) => resolve(response.data))
+        //         .catch(() => resolve(""));
+        //     })
+        // },
 
         triggerFileInput() {
             this.$refs.upload_file_input.click();
