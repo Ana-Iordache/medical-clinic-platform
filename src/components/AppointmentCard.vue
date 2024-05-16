@@ -35,27 +35,38 @@
 
         <v-divider color="#c6c6c6" class="border-opacity-50 mx-4 mb-2"></v-divider>
 
-        <div class="d-flex justify-center align-center text-button mb-2" :class="getColorClass(item.status)">
+        <div class="d-flex justify-center align-center text-button" :class="getColorClass(item.status)">
             <div> {{ item.status }} </div>
             <v-icon>{{ getIconStatus(item.status) }}</v-icon>
         </div>
 
         <!-- TODO: Prescription and Feedback -->
-        <div v-if="userRole == 'patient'" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap">
-            <v-btn variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadPrescription(item.prescriptionUrl)">
+        <div v-if="userRole == 'patient' && !isInFuture" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap mt-2">
+            <v-btn :variant="hasPrescription ? 'tonal' : 'outlined'" 
+                color="#4091BE" 
+                append-icon="mdi mdi-download" 
+                @click="downloadPrescription(item.prescriptionUrl)" 
+                title="Download prescription"
+                :disabled="!hasPrescription">
                 Prescription
             </v-btn>
-            <v-btn :disabled="isCanceled" :variant="isCanceled ? 'outlined' : 'tonal'" color="#4091BE" append-icon="mdi mdi-star" @click="openFeedbackDialog(true)">
+            <v-btn :disabled="isCanceled" 
+                :variant="isCanceled ? 'outlined' : 'tonal'" 
+                color="#4091BE" 
+                append-icon="mdi mdi-star" 
+                @click="openFeedbackDialog(true)" 
+                title="Give feedback">
                 Feedback
             </v-btn>
         </div>
 
-        <div v-if="userRole == 'doctor'" class="d-flex justify-center">
+        <div v-if="userRole == 'doctor' && !isInFuture" class="d-flex justify-center">
             <v-btn variant="tonal" color="#4091BE" 
-                :append-icon="item.prescriptionUrl ? 'mdi mdi-download' : 'mdi mdi-upload'" 
-                @click="item.prescriptionUrl ? downloadPrescription(item.prescriptionUrl) : uploadPrescription()">
+                :append-icon="hasPrescription ? 'mdi mdi-download' : 'mdi mdi-upload'" 
+                @click="hasPrescription ? downloadPrescription(item.prescriptionUrl) : triggerFileInput()">
                 Prescription
             </v-btn>
+            <input type="file" accept=".pdf" @change="handleFileUpload" ref="upload_file_input" hidden>
         </div>
     </v-card>    
 
@@ -80,7 +91,7 @@
                 v-model="feedback.rating"
                 half-increments
                 hover
-                :readonly="itHasFeedback"
+                :readonly="hasFeedback"
             ></v-rating>
 
             <v-textarea
@@ -91,23 +102,33 @@
                 counter
                 :rules="[rules.requiredField]"
                 ref="textarea_review"
-                :readonly="itHasFeedback">
+                :readonly="hasFeedback">
             </v-textarea>
 
             <v-card-actions class="align-self-center">
-                <v-btn v-if="!itHasFeedback" variant="tonal" @click="sendFeedback">Send</v-btn>
-                <v-btn variant="tonal" @click="openFeedbackDialog(false)"> {{ !itHasFeedback ? 'Cancel' : 'Close' }} </v-btn>
+                <v-btn v-if="!hasFeedback" variant="tonal" @click="sendFeedback">Send</v-btn>
+                <v-btn variant="tonal" @click="openFeedbackDialog(false)"> {{ !hasFeedback ? 'Cancel' : 'Close' }} </v-btn>
             </v-card-actions>
         </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="showLoadingDialog" max-width="320" persistent>
+        <Loading :title="'Uploading prescription'"></Loading>
     </v-dialog>
 </template>
 
 <script>
 import generalMixin from '@/commons/mixins';
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import Loading from '@/components/Loading.vue';
+
 export default {
     name: "AppointmentCard",
     mixins: [generalMixin],
     emits: ["appointment-updated"],
+    components: {
+        Loading
+    },
     props: {
         item: {
             type: Object,
@@ -128,7 +149,8 @@ export default {
         feedback: {
             rating: 0,
             review: ""
-        }
+        },
+        showLoadingDialog: false
     }),
     computed: {
         cardTitle() {
@@ -137,8 +159,11 @@ export default {
         isCanceled() {
             return this.item.status == 'canceled';
         },
-        itHasFeedback() {
+        hasFeedback() {
             return this.item.feedback;
+        },
+        hasPrescription() {
+            return this.item.prescriptionUrl;
         }
     },
     methods: {
@@ -167,8 +192,46 @@ export default {
         downloadPrescription(url) {
             console.log("TODO: downloadPrescription ", url)
         },
-        uploadPrescription() {
-            console.log("TODO uploadPrescription")
+
+        triggerFileInput() {
+            this.$refs.upload_file_input.click();
+        },
+        async handleFileUpload(e) {
+            const file = e.target.files[0];
+            if(file) {
+                await this.uploadPrescription(file);
+            }
+        },
+        uploadPrescription(file) {
+            const storage = getStorage();
+
+            let fileRef = storageRef(storage, 'patients-prescriptions/' + file.name);
+            let uploadTask = uploadBytesResumable(fileRef, file);
+
+            return new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Observe state change events such as progress, pause, and resume
+                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        this.showLoadingDialog = progress != 100;
+                    },
+                    (error) => {
+                        console.error(error);
+                        reject(error);
+                    },
+                    async () => {
+                        // Handle successful uploads on complete
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            await this.updateAppointment({ field: "prescriptionUrl", value: downloadURL })
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    }
+                );
+            })
         },
 
         async cancelAppointment() {
