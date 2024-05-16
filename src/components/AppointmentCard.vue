@@ -1,7 +1,9 @@
 <template>
     <v-card class="pb-3 pointer_on_hover" border flat>
         <div v-if="isInFuture" class="d-flex justify-end mt-2 me-2">
-            <v-icon color="red" 
+            <v-icon 
+                :disabled="item.status == 'canceled'"
+                color="red" 
                 @click="cancelAppointment" 
                 title="Cancel appointment"
             >mdi-calendar-remove</v-icon>

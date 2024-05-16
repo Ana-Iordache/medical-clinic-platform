@@ -93,7 +93,7 @@
     <v-snackbar v-model="confirmation.show"
         :timeout="4000" 
         :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" 
-        variant="tonal">
+        elevation="24">
         <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
         {{ confirmation.message }}
     </v-snackbar>
@@ -180,6 +180,9 @@ export default {
         },
         openCancelAppointmentDialog(show) {
             this.cancelAppointmentDialog.show = show;
+            if(!show) {
+                this.cancelAppointmentDialog.id = null;
+            }
         },
         async appointmentAdded(confirmation, message) {
             this.confirmation = {
@@ -199,9 +202,35 @@ export default {
             this.cancelAppointmentDialog.id = appointmentId
             this.openCancelAppointmentDialog(true);
         },
-        cancelAppointment() {
-            console.log("appintment to cancel: ", this.cancelAppointmentDialog.id)
-            this.openCancelAppointmentDialog(false);
+        async cancelAppointment() {
+            const body = {
+                field: "status",
+                value: "canceled"
+            }
+            return new Promise(resolve => {
+                this.axios.patch(`/appointments/${this.cancelAppointmentDialog.id}`, body)
+                .then((response) => {
+                    this.confirmation = {
+                        show: true,
+                        success: true,
+                        message: response.data.message
+                    }
+                    let appointmentUpdated = this.appointmentsList.find(ap => ap._id == this.cancelAppointmentDialog.id);
+                    appointmentUpdated.status = "canceled";
+                })
+                .catch((error) => {
+                    this.confirmation = {
+                        show: true,
+                        success: false,
+                        message: error.response.data.message
+                    }
+                })
+                .finally(() => {
+                    this.openCancelAppointmentDialog(false);
+                    resolve();
+                })
+            })
+            
         }
     }
 }
