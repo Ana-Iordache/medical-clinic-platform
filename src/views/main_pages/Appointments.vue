@@ -45,7 +45,7 @@
                 <template v-slot:default="{ items }">
                     <v-container class="pa-2" fluid>
                         <v-row dense>
-                            <v-col v-for="item in items" :key="item._id" cols="auto" md="4" title="Click to see details">
+                            <v-col v-for="item in items" :key="item._id" cols="auto" md="4">
                                 <AppointmentCard :isInFuture="currentTab == 'future'" 
                                     :item="item.raw" 
                                     :userRole="currentUserConnected.role"
@@ -98,7 +98,7 @@
         {{ confirmation.message }}
     </v-snackbar>
 
-    <v-dialog v-model="cancelAppointmentDialog.show" width="80%">
+    <v-dialog v-model="cancelAppointmentDialog.show" width="fit-content">
         <v-card class="pa-3 text-center">
             <v-card-title>Are you sure you want to cancel this appointment?</v-card-title>
             <v-spacer></v-spacer>
