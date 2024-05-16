@@ -28,14 +28,6 @@ const generalMixin = {
             return new Date(dateAndTimeString);
         },
         /**
-         * TODO: this is the same as formatTimeFromDate
-         * @param {Date} date 
-         * @returns A string with time form a date in format "hh:mm"
-         */
-        getTimeFromDate(date) {
-            return `${date.getHours()}:${date.getMinutes()}`
-        },
-        /**
          * 
          * @param {Date} date 
          * @returns A string with date from a date in format "dd Month yyyy"
@@ -59,11 +51,24 @@ const generalMixin = {
         /**
          * Formats the time as 'HH:MM' string from a date.
          * @param {Date} date 
+         * @param {Boolean} inUTC
          * @returns The time from date as a string in format 'HH:MM'
          */
-        formatTimeFromDate(date) {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
+        formatTimeFromDate(date, inUTC) {
+            let hours;
+            let minutes;
+
+            if (inUTC) {
+                hours = date.getUTCHours();
+                minutes = date.getUTCMinutes();
+            } else {
+                hours = date.getHours();
+                minutes = date.getMinutes();
+            }
+
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+
             return `${hours}:${minutes}`;
         }
     }
