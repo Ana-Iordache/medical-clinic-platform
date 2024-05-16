@@ -83,8 +83,17 @@
 
     <v-dialog v-model="showAddAppointmentDialog" max-width="80%">
         <AddNewAppointmentCard @appointment-creation-canceled="openAddAppointmentDialog(false)"
+            @appointment-added="appointmentAdded"
             :patientEmail="currentUserConnected.email"></AddNewAppointmentCard>
     </v-dialog>
+
+    <v-snackbar v-model="confirmation.show"
+        :timeout="4000" 
+        :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" 
+        variant="tonal">
+        <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
+        {{ confirmation.message }}
+    </v-snackbar>
 </template>
 
 <script>
@@ -105,7 +114,12 @@ export default {
         currentTab: 'future',
         search: "",
         appointmentsList: [],
-        showAddAppointmentDialog: false
+        showAddAppointmentDialog: false,
+        confirmation: {
+            show: false,
+            success: true,
+            message: ""
+        },
     }),
     async mounted() {
         if(this.currentUserConnected)
@@ -144,6 +158,20 @@ export default {
         },
         openAddAppointmentDialog(show) {
             this.showAddAppointmentDialog = show;
+        },
+        async appointmentAdded(confirmation, message) {
+            this.confirmation = {
+                show: true,
+                success: confirmation,
+                message: message
+            }
+
+            this.openAddAppointmentDialog(false);
+
+            // update appointments list
+            if(confirmation) {
+                await this.loadAppointments();
+            }
         }
     }
 }

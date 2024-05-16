@@ -133,7 +133,7 @@ import { VDateInput } from 'vuetify/labs/VDateInput'
 export default {
     name: "AddNewAppointmentCard",
     mixins: [generalMixin],
-    emits: ["appointment-creation-canceled"],
+    emits: ["appointment-creation-canceled", "appointment-added"],
     components: {
         VDateInput
     },
@@ -265,7 +265,7 @@ export default {
             const hoursArray = [];
 
             while (currentTime < endTime) {
-                const formattedTime = this.formatTimeFromDate(currentTime);
+                const formattedTime = this.formatTimeFromDate(currentTime, false);
 
                 // add the hour only if is not already taken by another appointment which is not canceled
                 if(!busyHours.includes(formattedTime))
@@ -297,14 +297,15 @@ export default {
         cancel() {
             this.$emit("appointment-creation-canceled");
         },
-        // TODO: add confirmation snackbar or dialog
         addAppointment(appointment) {
             return new Promise(resolve => {
                 this.axios.post(`/users/${this.patientEmail}/appointments`, appointment)
-                    .then(() => {
-                        console.log("added")
+                    .then(response => {
+                        this.$emit("appointment-added", true, response.data.message)
                     })
-                    .catch(error => console.error(error))
+                    .catch(error => {
+                        this.$emit("appointment-added", false, error.response.data.message)
+                    })
                     .finally(() => resolve())
             })
         }

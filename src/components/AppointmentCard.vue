@@ -5,7 +5,7 @@
         <div class="d-flex flex-row justify-space-around ma-2">
             <div class="d-inline-flex">
                 <v-icon>mdi-clock-time-eight</v-icon>
-                <div class="px-1"> {{ getTimeFromDate(parseDateAndTimeString(item.dateAndTime)) }} </div>
+                <div class="px-1"> {{ formatTimeFromDate(parseDateAndTimeString(item.dateAndTime), true) }} </div>
             </div>
             <div class="d-inline-flex">
                 <v-icon>mdi-calendar</v-icon>

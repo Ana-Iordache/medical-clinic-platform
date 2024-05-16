@@ -19,7 +19,7 @@ async function getMany(req, res) {
     if (appointments.length > 0) {
         res.status(200).json(appointments);
     } else {
-        res.status(404).json("Appointments not found.");
+        res.status(404).json({ message: "Appointments not found." });
     }
 }
 
@@ -54,10 +54,10 @@ async function add(req, res) {
 
     try {
         await appointment.save();
-        res.status(200).json("Appointment created successfully.");
+        res.status(200).json({ message: "Appointment added successfully." });
     } catch (err) {
         console.log("Failed to create appointment: ", err);
-        res.status(500).json("Failed to create appointment.");
+        res.status(500).json({ message: "Failed to add appointment." });
     }
 }
 
