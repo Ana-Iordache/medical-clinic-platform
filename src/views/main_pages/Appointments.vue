@@ -49,7 +49,7 @@
                                 <AppointmentCard :isInFuture="currentTab == 'future'" 
                                     :item="item.raw" 
                                     :userRole="currentUserConnected.role"
-                                    @appointment-canceled="onAppointmentCanceled"></AppointmentCard>
+                                    @appointment-updated="onAppointmentUpdated"></AppointmentCard>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -176,15 +176,16 @@ export default {
                 await this.loadAppointments();
             }
         },
-        onAppointmentCanceled(isCanceled, message, appointmentId) {
+        onAppointmentUpdated(updatedSuccessfully, message, appointmentId, propertyUpdated) {
             this.confirmation = {
                 show: true,
-                success: isCanceled,
+                success: updatedSuccessfully,
                 message: message
             }
-            if(isCanceled) {
+
+            if (updatedSuccessfully) {
                 let appointmentUpdated = this.appointmentsList.find(ap => ap._id == appointmentId);
-                appointmentUpdated.status = "canceled";
+                appointmentUpdated[propertyUpdated.field] = propertyUpdated.value;
             }
         },
         
