@@ -4,7 +4,7 @@
             <v-btn v-if="isInFuture"
                 :disabled="item.status == 'canceled'"
                 color="red"
-                @click="cancelAppointment" 
+                @click="openCancelAppointmentDialog(true)" 
                 title="Cancel appointment"
                 variant="text"
                 icon="mdi-calendar-remove"
@@ -57,7 +57,19 @@
                 Prescription
             </v-btn>
         </div>
-    </v-card>
+    </v-card>    
+
+    <v-dialog v-model="showCancelAppointmentDialog" width="fit-content">
+        <v-card class="pa-3 text-center">
+            <v-card-title>Are you sure you want to cancel this appointment?</v-card-title>
+            <v-spacer></v-spacer>
+
+            <v-card-actions class="align-self-center">
+                <v-btn variant="tonal" color="teal-darken-1" text="Yes" @click="cancelAppointment"></v-btn>
+                <v-btn variant="tonal" text="No" @click="openCancelAppointmentDialog(false)"></v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -65,7 +77,7 @@ import generalMixin from '@/commons/mixins';
 export default {
     name: "AppointmentCard",
     mixins: [generalMixin],
-    emits: ["cancel-appointment"],
+    emits: ["appointment-canceled"],
     props: {
         item: {
             type: Object,
@@ -80,6 +92,9 @@ export default {
             default: true
         }
     },
+    data: () => ({
+        showCancelAppointmentDialog: false
+    }),
     computed: {
         cardTitle() {
             return this.userRole == 'patient' ? this.item.specialization : this.item.patientFullName;
@@ -117,9 +132,29 @@ export default {
         openFeedbackDialog() {
             console.log("TODO openFeedbackDialog")
         },
-        cancelAppointment() {
-            this.$emit("cancel-appointment", this.item._id);
-        }
+        async cancelAppointment() {
+            const body = {
+                field: "status",
+                value: "canceled"
+            }
+            return new Promise(resolve => {
+                this.axios.patch(`/appointments/${this.item._id}`, body)
+                .then((response) => {
+                    this.$emit("appointment-canceled", true, response.data.message, this.item._id);
+                })
+                .catch((error) => {
+                    this.$emit("appointment-canceled", false, error.response.data.message, this.item._id);
+                })
+                .finally(() => {
+                    this.openCancelAppointmentDialog(false);
+                    resolve();
+                })
+            })
+            
+        },
+        openCancelAppointmentDialog(show) {
+            this.showCancelAppointmentDialog = show;
+        },
     }
 }
 </script>

@@ -49,7 +49,7 @@
                                 <AppointmentCard :isInFuture="currentTab == 'future'" 
                                     :item="item.raw" 
                                     :userRole="currentUserConnected.role"
-                                    @cancel-appointment="onCancelAppointment"></AppointmentCard>
+                                    @appointment-canceled="onAppointmentCanceled"></AppointmentCard>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -97,18 +97,6 @@
         <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
         {{ confirmation.message }}
     </v-snackbar>
-
-    <v-dialog v-model="cancelAppointmentDialog.show" width="fit-content">
-        <v-card class="pa-3 text-center">
-            <v-card-title>Are you sure you want to cancel this appointment?</v-card-title>
-            <v-spacer></v-spacer>
-
-            <v-card-actions class="align-self-center">
-                <v-btn variant="tonal" color="teal-darken-1" text="Yes" @click="cancelAppointment"></v-btn>
-                <v-btn variant="tonal" text="No" @click="openCancelAppointmentDialog(false)"></v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
 </template>
 
 <script>
@@ -134,10 +122,6 @@ export default {
             show: false,
             success: true,
             message: ""
-        },
-        cancelAppointmentDialog: {
-            show: false,
-            id: null
         }
     }),
     async mounted() {
@@ -178,12 +162,6 @@ export default {
         openAddAppointmentDialog(show) {
             this.showAddAppointmentDialog = show;
         },
-        openCancelAppointmentDialog(show) {
-            this.cancelAppointmentDialog.show = show;
-            if(!show) {
-                this.cancelAppointmentDialog.id = null;
-            }
-        },
         async appointmentAdded(confirmation, message) {
             this.confirmation = {
                 show: true,
@@ -198,40 +176,18 @@ export default {
                 await this.loadAppointments();
             }
         },
-        onCancelAppointment(appointmentId) {
-            this.cancelAppointmentDialog.id = appointmentId
-            this.openCancelAppointmentDialog(true);
-        },
-        async cancelAppointment() {
-            const body = {
-                field: "status",
-                value: "canceled"
+        onAppointmentCanceled(isCanceled, message, appointmentId) {
+            this.confirmation = {
+                show: true,
+                success: isCanceled,
+                message: message
             }
-            return new Promise(resolve => {
-                this.axios.patch(`/appointments/${this.cancelAppointmentDialog.id}`, body)
-                .then((response) => {
-                    this.confirmation = {
-                        show: true,
-                        success: true,
-                        message: response.data.message
-                    }
-                    let appointmentUpdated = this.appointmentsList.find(ap => ap._id == this.cancelAppointmentDialog.id);
-                    appointmentUpdated.status = "canceled";
-                })
-                .catch((error) => {
-                    this.confirmation = {
-                        show: true,
-                        success: false,
-                        message: error.response.data.message
-                    }
-                })
-                .finally(() => {
-                    this.openCancelAppointmentDialog(false);
-                    resolve();
-                })
-            })
-            
-        }
+            if(isCanceled) {
+                let appointmentUpdated = this.appointmentsList.find(ap => ap._id == appointmentId);
+                appointmentUpdated.status = "canceled";
+            }
+        },
+        
     }
 }
 </script>
