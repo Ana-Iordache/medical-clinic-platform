@@ -3,6 +3,7 @@
     "BACKEND_HOST": "localhost",
     "BASE_URI": "/",
     "FRONTEND_PORT": "8080",
+    "FRONTEND_HOST": "localhost",
     "DB_NAME": "your_db_name",
     "DB_HOST": "localhost",
     "DB_PORT": "27017"

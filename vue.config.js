@@ -10,6 +10,7 @@ module.exports = defineConfig({
   },
 
   devServer: {
+    host: config.FRONTEND_HOST,
     port: config.FRONTEND_PORT
   }
 })
