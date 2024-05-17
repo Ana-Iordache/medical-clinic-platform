@@ -26,7 +26,7 @@ async function getMany(req, res) {
 // POST /users/:userEmail/appointments
 async function add(req, res) {
     const patientEmail = req.params.userEmail;
-    const { doctorEmail, date, time, amount } = req.body;
+    const { doctorEmail, date, time, amount, service } = req.body;
 
     const dateAndTime = setTimeForDate(date, time);
 
@@ -41,7 +41,8 @@ async function add(req, res) {
         dateOfIssue: dateOfIssue,
         dueDate: dueDate,
         status: "unpaid",
-        amount: amount
+        amount: amount,
+        service: service
     }
 
     const appointment = new Appointments({

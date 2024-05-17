@@ -285,7 +285,8 @@ export default {
                 doctorEmail: this.doctorSelectedInfo.email,
                 date: this.getStringFormatOfDate(this.dateSelected),
                 time: this.timeSelected,
-                amount: this.amountToPay
+                amount: this.amountToPay,
+                service: this.investigationSelected
             }
             
             await this.addAppointment(appointment);
