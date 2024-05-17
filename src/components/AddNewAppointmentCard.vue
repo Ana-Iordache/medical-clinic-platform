@@ -113,7 +113,7 @@
                             Confirm
                         </v-btn>
                         <v-btn variant="tonal" color="#4091BE" @click="confirmAndPayAppointment()">
-                            Confirm and pay {{ amountToPay }}
+                            Confirm and pay {{ amountToPay }} RON
                         </v-btn>
                         <v-btn variant="tonal" @click="cancel()">
                             Cancel
