@@ -5,6 +5,7 @@ const users = require('./../controllers/users');
 const appointments = require('./../controllers/appointments');
 const services = require('./../controllers/services');
 const invoices = require('./../controllers/invoices');
+const feedback = require('./../controllers/feedback');
 const stripePayments = require('./../controllers/stripePayments');
 
 // Users
@@ -22,6 +23,9 @@ router.get('/users/:userEmail/payments', (req, res) => requestHandler(invoices.g
 
 // Services
 router.get('/services', (req, res) => requestHandler(services.getAll, req, res));
+
+// Feedback
+router.get('/users/:userEmail/feedback', (req, res) => requestHandler(feedback.getMany, req, res));
 
 // Stripe payments
 router.get('/success', (req, res) => requestHandler(stripePayments.successPayment, req, res))
