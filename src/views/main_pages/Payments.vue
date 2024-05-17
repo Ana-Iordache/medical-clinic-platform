@@ -69,6 +69,14 @@
             </v-data-iterator>
         </div>
     </div>
+
+    <v-snackbar v-model="confirmation.show"
+        :timeout="4000" 
+        :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" 
+        elevation="24">
+        <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
+        {{ confirmation.message }}
+    </v-snackbar>
 </template>
 
 <script>
@@ -85,11 +93,18 @@ export default {
         filterStatuses: [ "All", "Paid", "Unpaid", "Canceled" ],
         selectedFilter: "All",
         paymentsList: [],
-        search: ""
+        search: "",
+        confirmation: {
+            show: false,
+            success: true,
+            message: ""
+        }
     }),
     async mounted() {
         if(this.currentUserConnected)
             await this.loadPayments();
+
+        this.checkIfAPaymentHasBeenMade();
     },
     computed: {
         ...mapStores(useAuthenticationStore),
@@ -115,6 +130,32 @@ export default {
                     .catch(error => console.error(error))
                     .finally(() => resolve());
             })
+        },
+        checkIfAPaymentHasBeenMade() {
+            const paymentStatusQueryParam = this.$route.query.paymentStatus;
+            if(paymentStatusQueryParam) {
+                this.confirmation = {
+                    show: true,
+                    success: paymentStatusQueryParam == "paid",
+                    message: this.getPaymentConfirmationMessage(paymentStatusQueryParam)
+                }
+                this.removeQueryParamFromRoute("paymentStatus");
+            }
+        },
+        getPaymentConfirmationMessage(paymentStatus) {
+            switch(paymentStatus) {
+                case "paid":
+                    return "The payment has been made successfully.";
+                case "canceled":
+                    return "The payment has been canceled.";
+                default:
+                    return `The payment has failed with status: ${paymentStatus}.`
+            }
+        },
+        removeQueryParamFromRoute(queryParam) {
+            const queryParams = { ...this.$route.query };
+            delete queryParams[queryParam];
+            this.$router.replace({ query: queryParams });
         }
     }
 }
