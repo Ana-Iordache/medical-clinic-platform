@@ -79,6 +79,8 @@
     </v-snackbar>
 </template>
 
+<!-- TODO: add a loading until credentials are validated -->
+
 <script>
 import generalMixin from "@/commons/mixins";
 import ResetPasswordForm from "@/views/authentication_forms/ResetPassword.vue";
