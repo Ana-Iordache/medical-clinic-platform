@@ -162,4 +162,8 @@ html {
   flex-wrap: wrap;
   gap: 1rem;
 }
+
+.hidden_element {
+  visibility: hidden;
+}
 </style>

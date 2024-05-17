@@ -1,13 +1,32 @@
 <template>
     <v-card class="pb-3" border flat>
-        <div class="d-flex justify-end mt-2 mx-2">
+        <div v-if="userRole == 'patient'" class="d-flex justify-end mt-2 mx-2">
             <v-btn v-if="isInFuture"
                 :disabled="isCanceled"
                 color="red"
-                @click="openCancelAppointmentDialog(true)" 
+                @click="openUpdateStatusAppointmentDialog(true, 'canceled')" 
                 title="Cancel appointment"
                 variant="text"
                 icon="mdi-calendar-remove"
+                density="compact"
+            ></v-btn>
+        </div>
+
+        <div v-else-if="userRole == 'doctor'" class="d-flex justify-end mt-2 mx-2" :class="isStatusSet ? 'hidden_element' : ''">
+            <v-btn
+                color="red"
+                @click="openUpdateStatusAppointmentDialog(true, 'unhonored')" 
+                title="Set unhonored appointment"
+                variant="text"
+                icon="mdi-calendar-remove"
+                density="compact"
+            ></v-btn>
+            <v-btn
+                color="green"
+                @click="openUpdateStatusAppointmentDialog(true, 'honored')" 
+                title="Set honored appointment"
+                variant="text"
+                icon="mdi-calendar-check"
                 density="compact"
             ></v-btn>
         </div>
@@ -71,14 +90,14 @@
         </div>
     </v-card>    
 
-    <v-dialog v-model="showCancelAppointmentDialog" width="fit-content">
+    <v-dialog v-model="showUpdateStatusAppointmentDialog" width="fit-content">
         <v-card class="pa-3 text-center">
-            <v-card-title>Are you sure you want to cancel this appointment?</v-card-title>
+            <v-card-title>{{ updateAppointmentCardTitle }}</v-card-title>
             <v-spacer></v-spacer>
 
             <v-card-actions class="align-self-center">
-                <v-btn variant="tonal" color="teal-darken-1" text="Yes" @click="cancelAppointment"></v-btn>
-                <v-btn variant="tonal" text="No" @click="openCancelAppointmentDialog(false)"></v-btn>
+                <v-btn variant="tonal" color="teal-darken-1" text="Yes" @click="updateStatusAppointment"></v-btn>
+                <v-btn variant="tonal" text="No" @click="openUpdateStatusAppointmentDialog(false, '')"></v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -145,7 +164,9 @@ export default {
         }
     },
     data: () => ({
-        showCancelAppointmentDialog: false,
+        showUpdateStatusAppointmentDialog: false,
+        updateAppointmentStatus: "",
+
         showFeedbackDialog: false,
         feedback: {
             rating: 0,
@@ -165,6 +186,20 @@ export default {
         },
         hasPrescription() {
             return this.item.prescriptionUrl;
+        },
+        isStatusSet() {
+            return this.item.status != "unset";
+        },
+        updateAppointmentCardTitle() {
+            switch(this.updateAppointmentStatus) {
+                case "canceled":
+                    return "Are you sure you want to cancel this appointment?";
+                case "honored":
+                case "unhonored":
+                    return `Are you sure that this appointment has been ${this.updateAppointmentStatus}?`;
+                default:
+                    return "";
+            }
         }
     },
     methods: {
@@ -251,16 +286,18 @@ export default {
             })
         },
 
-        async cancelAppointment() {
+        async updateStatusAppointment() {
             const body = {
                 field: "status",
-                value: "canceled"
+                value: this.updateAppointmentStatus
             }
             await this.updateAppointment(body);
-            this.openCancelAppointmentDialog(false);
+            this.openUpdateStatusAppointmentDialog(false, "");
         },
-        openCancelAppointmentDialog(show) {
-            this.showCancelAppointmentDialog = show;
+
+        openUpdateStatusAppointmentDialog(show, status) {
+            this.showUpdateStatusAppointmentDialog = show;
+            this.updateAppointmentStatus = status;
         },
 
         
