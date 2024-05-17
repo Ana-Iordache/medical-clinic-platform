@@ -40,8 +40,7 @@
             <v-icon>{{ getIconStatus(item.status) }}</v-icon>
         </div>
 
-        <!-- TODO: Prescription and Feedback -->
-        <div v-if="userRole == 'patient' && !isInFuture" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap">
+to        <div v-if="userRole == 'patient' && !isInFuture" class="d-flex flex-row justify-space-around flex-grow-1 flex-wrap">
             <v-btn :variant="hasPrescription ? 'tonal' : 'outlined'" 
                 color="#4091BE" 
                 append-icon="mdi mdi-download" 
