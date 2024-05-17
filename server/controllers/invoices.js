@@ -12,7 +12,8 @@ async function getPaymentsOfUser(req, res) {
             "amount": "$invoice.amount", 
             "dateOfIssue": "$invoice.dateOfIssue", 
             "dueDate": "$invoice.dueDate", 
-            "status": "$invoice.status"
+            "status": "$invoice.status",
+            "service": "$invoice.service"
         }
     );
 
