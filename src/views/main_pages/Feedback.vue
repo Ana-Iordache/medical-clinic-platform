@@ -9,8 +9,7 @@
                         <div class="d-flex flex-row flex-wrap">
                             <FeedbackCard v-for="(feedbackItem, index) in feedbackOfPatient.feedback" 
                                 :key="index"
-                                :feedback="feedbackItem"
-                                class="ma-3">
+                                :feedback="feedbackItem">
                             </FeedbackCard>
                         </div>
                     </v-expansion-panel-text>

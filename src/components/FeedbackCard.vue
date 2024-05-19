@@ -1,5 +1,5 @@
 <template>
-    <v-card width="30%" border flat>
+    <v-card width="30%" border flat class="ma-3">
         <v-card-title>
             <div class="d-flex flex-row align-center justify-center">
                 {{ cardTitle }}
@@ -15,10 +15,15 @@
             <div class="text-center font-weight-light">
                 {{ getDateStringFromDate(parseDateAndTimeString(feedback.dateAndTime)) }}
             </div>
-            <v-btn icon="mdi-calendar-search" :title="'See appointment'" @click="openAppointmentDetailsDialog">
+            <v-btn icon="mdi-calendar-search" :title="'See appointment'" @click="openAppointmentDetailsDialog(true)">
             </v-btn>
         </v-card-actions>
     </v-card>
+    
+    <!-- TODO: see appointment from feedback -->
+    <v-dialog v-model="appointmentDetailsDialog.show">
+        {{ appointmentDetailsDialog.data }}
+    </v-dialog>
 </template>
 
 <script>
@@ -34,7 +39,10 @@ export default {
         }
     },
     data: () => ({
-
+        appointmentDetailsDialog: {
+            show: false,
+            data: null
+        }
     }),
     computed: {
         cardTitle() {
@@ -42,8 +50,18 @@ export default {
         }
     },
     methods: {
-        openAppointmentDetailsDialog() {
-            console.log("appointment id: ", this.feedback.appointmentId)
+        async openAppointmentDetailsDialog(show) {
+            this.appointmentDetailsDialog.data = show ? await this.getAppointment(this.feedback.appointmentId) : null;
+            this.appointmentDetailsDialog.show = show;
+
+            console.log("appointmentDetailsDialog: ", this.appointmentDetailsDialog)
+        },
+        getAppointment(appointmentId) {
+            return new Promise(resolve => {
+                this.axios.get(`/appointments/${appointmentId}`)
+                .then(response => resolve(response.data))
+                .catch(() => resolve(null));
+            })
         }
     }
 }

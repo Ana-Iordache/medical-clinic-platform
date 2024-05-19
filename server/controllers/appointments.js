@@ -23,6 +23,18 @@ async function getMany(req, res) {
     }
 }
 
+// GET /appointments/:appointmentId
+async function getOne(req, res) {
+    const appointmentId = req.params.appointmentId;
+    const appointment = await Appointments.findOne({ _id: appointmentId });
+
+    if (appointment) {
+        res.status(200).json(appointment);
+    } else {
+        res.status(404).json({ message: "Appointment not found." });
+    }
+}
+
 // POST /users/:userEmail/appointments
 async function add(req, res) {
     const patientEmail = req.params.userEmail;
@@ -80,6 +92,7 @@ async function updateById(req, res) {
 
 module.exports = {
     getMany,
+    getOne,
     add,
     updateById
 }
