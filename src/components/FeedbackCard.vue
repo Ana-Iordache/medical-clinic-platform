@@ -20,18 +20,21 @@
         </v-card-actions>
     </v-card>
     
-    <!-- TODO: see appointment from feedback -->
-    <v-dialog v-model="appointmentDetailsDialog.show">
-        {{ appointmentDetailsDialog.data }}
+    <v-dialog v-model="appointmentDetailsDialog.show" width="30%">
+       <AppointmentCard :item="appointmentDetailsDialog.data" :user-role="'doctor'" :isInFuture="false"></AppointmentCard>
     </v-dialog>
 </template>
 
 <script>
 import generalMixin from '@/commons/mixins';
+import AppointmentCard from '@/components/AppointmentCard.vue';
 
 export default {
     name: "FeedbackCard",
     mixins: [generalMixin],
+    components: {
+        AppointmentCard
+    },
     props: {
         feedback: {
             type: Object,
@@ -53,8 +56,6 @@ export default {
         async openAppointmentDetailsDialog(show) {
             this.appointmentDetailsDialog.data = show ? await this.getAppointment(this.feedback.appointmentId) : null;
             this.appointmentDetailsDialog.show = show;
-
-            console.log("appointmentDetailsDialog: ", this.appointmentDetailsDialog)
         },
         getAppointment(appointmentId) {
             return new Promise(resolve => {
