@@ -1,10 +1,10 @@
-const Conversations = require('./../models/Conversations');
+const { getConversationsByUserEmail } = require("../commons/aggregations/conversations");
 
 // GET /users/:userEmail/conversations
 async function getMany(req, res) {
     const userEmail = req.params.userEmail;
 
-    let conversations = await Conversations.find({ usersEmail: { $in: [userEmail] } });
+    let conversations = await getConversationsByUserEmail(userEmail);
     if(conversations.length > 0) {
         res.status(200).json(conversations);
     } else {
