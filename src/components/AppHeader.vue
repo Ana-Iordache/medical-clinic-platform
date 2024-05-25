@@ -63,6 +63,7 @@ export default {
   }),
 
   mounted() {
+    // TODO: maybe I should move this logic in App component
     this.auth = getAuth();
 
     onAuthStateChanged(this.auth, async user => {

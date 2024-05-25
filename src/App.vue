@@ -4,22 +4,47 @@
       <AppHeader />
       <RouterView />
     </v-main>
+    <FloatingActionButtons v-if="userIsLoggedIn" :currentUser="currentUser"/>
   </v-app>
 </template>
 
 <script>
 import AppHeader from './components/AppHeader.vue'
+import FloatingActionButtons from './components/FloatingActionButtons.vue'
+import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { mapStores } from 'pinia';
+import { useAuthenticationStore } from '@/pinia_stores/authenticationStore';
 
 export default {
   name: 'App',
 
   components: {
     AppHeader,
+    FloatingActionButtons,
   },
 
   data: () => ({
-    //
+    userIsLoggedIn: false,
+    currentUser: null
   }),
+
+  mounted() {
+    onAuthStateChanged(getAuth(), async user => {
+      this.userIsLoggedIn = user ? true : false;
+
+      if (this.userIsLoggedIn) {
+        await this.authenticationStore.setCurrentUser(user.email);
+        this.currentUser = this.authenticationStore.user;
+      } else {
+        this.authenticationStore.removeUser();
+        this.currentUser = null;
+      }
+    })
+  },
+
+  computed: {
+    ...mapStores(useAuthenticationStore)
+  }
 }
 </script>
 
