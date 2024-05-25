@@ -25,7 +25,7 @@ export default {
 
   data: () => ({
     userIsLoggedIn: false,
-    currentUser: null
+    currentUser: {}
   }),
 
   mounted() {
@@ -37,7 +37,7 @@ export default {
         this.currentUser = this.authenticationStore.user;
       } else {
         this.authenticationStore.removeUser();
-        this.currentUser = null;
+        this.currentUser = {};
       }
     })
   },
