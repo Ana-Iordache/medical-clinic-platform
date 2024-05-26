@@ -33,6 +33,7 @@
                 </v-list>
             </v-col>
 
+            <!-- TODO: add this to a separate component -->
             <v-col class="pa-0">
                 <div v-if="currentConversation" class="current_conversation_section">
                     <v-toolbar>
