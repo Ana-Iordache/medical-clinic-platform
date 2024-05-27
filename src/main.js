@@ -6,6 +6,7 @@ import router from './router'
 import axiosPlugin from './plugins/axios'
 import pinia from './plugins/pinia';
 import initilizeFirebase from './plugins/firebase'
+import socketPlugin from './plugins/socketIo'
 
 loadFonts()
 
@@ -17,4 +18,5 @@ createApp(App)
   .use(router)
   .use(axiosPlugin)
   .use(pinia)
+  .use(socketPlugin)
   .mount('#app')

@@ -31,6 +31,8 @@ router.get('/users/:userEmail/feedback', (req, res) => requestHandler(feedback.g
 
 // Conversations
 router.get('/users/:userEmail/conversations', (req, res) => requestHandler(conversations.getMany, req, res));
+router.post('/users/:userEmail/conversations', (req, res) => requestHandler(conversations.addOne, req, res));
+router.patch('/users/:userEmail/conversations/:conversationId', (req, res) => requestHandler(conversations.updateOne, req, res));
 
 // Stripe payments
 router.get('/success', (req, res) => requestHandler(stripePayments.successPayment, req, res))

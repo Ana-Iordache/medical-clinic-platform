@@ -6,7 +6,24 @@ const port = config.BACKEND_PORT;
 const routes = require('./router/routes');
 const cors = require('cors');
 const mongoose = require("mongoose");
+const http = require('http');
+const server = http.createServer(app);
+const socketIo = require('socket.io');
 
+// Enable CORS for all routes
+app.use(cors());
+
+const io = socketIo(server, {
+  cors: {
+    origin: `http://${config.FRONTEND_HOST}:${config.FRONTEND_PORT}`,
+    credentials: true
+  },
+});
+
+// Middleware to parse JSON in the request body
+app.use(bodyParser.json());
+
+// MongoDB connection
 mongoose.set('strictQuery', false);
 const dbURI = `mongodb://${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`;
 const dbConnection = mongoose.connection;
@@ -27,17 +44,28 @@ dbConnection.once("open", () => {
 
 connectToMongoDB(dbURI);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// Socket.io connection
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // Listen for incoming messages
+  socket.on('sendMessage', async (message) => {
+    console.log("sendMessage: ", message)
+    io.emit('receiveMessage', message);
+  });
+
+  // Disconnect event
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
 });
 
-// Enable CORS for all routes
-app.use(cors());
-
-// Middleware to parse JSON in the request body
-app.use(bodyParser.json());
-
 app.use(config.BASE_URI, routes)
+
+// Start server
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
 
 function connectToMongoDB(uri) {
   mongoose.connect(uri)

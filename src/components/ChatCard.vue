@@ -13,8 +13,8 @@
                         title="Click to open chat" 
                         :class="{'selected' : currentConversationId == conversation._id}"
                         @click="setCurrentConversation(conversation._id)">
-                        <v-list-item :prepend-avatar="profilePhotoOfOtherUser(conversation.usersInfo)">
-                            <v-list-item-title class="font-weight-bold">{{ getNameOfOtherUser(conversation.usersInfo) }}</v-list-item-title>
+                        <v-list-item :prepend-avatar="getInfoOfOtherUser(conversation.usersInfo, 'profilePhoto')">
+                            <v-list-item-title class="font-weight-bold">{{ getInfoOfOtherUser(conversation.usersInfo, 'fullName') }}</v-list-item-title>
                             <v-list-item-subtitle>
                                 <div class="d-flex align-center font-italic">
                                     <v-icon v-if="isTransmitterOfLastMessage(conversation.messages)">
@@ -37,8 +37,8 @@
             <v-col class="pa-0">
                 <div v-if="currentConversation" class="current_conversation_section">
                     <v-toolbar>
-                        <v-avatar :image="profilePhotoOfOtherUser(currentConversation.usersInfo)" size="55" class="ms-2"></v-avatar>
-                        <v-toolbar-title>{{ getNameOfOtherUser(currentConversation.usersInfo) }}</v-toolbar-title>
+                        <v-avatar :image="getInfoOfOtherUser(currentConversation.usersInfo, 'profilePhoto')" size="55" class="ms-2"></v-avatar>
+                        <v-toolbar-title>{{ getInfoOfOtherUser(currentConversation.usersInfo, 'fullName') }}</v-toolbar-title>
                     </v-toolbar>
                     <div class="d-flex flex-column flex-grow-1 current_chat_container">
                         <div v-for="(message, index) in currentConversation.messages" 
@@ -66,6 +66,7 @@
                             hide-details
                             class="ma-2"
                             @click:append-inner="sendMessage()"
+                            @keyup.enter="sendMessage()"
                             >
                         </v-text-field>
                     </div>
@@ -96,6 +97,12 @@ export default {
     }),
     async mounted() {
         await this.loadConversations();
+
+        // Listen for new messages
+        this.$socket.on('receiveMessage', (message) => {
+            this.currentConversation.messages.push(message);
+            this.scrollToLastMessage();
+        });
     },
     computed: {
         currentConversation() {
@@ -113,6 +120,13 @@ export default {
                     .catch(error => console.error(error))
                     .finally(() => resolve());
             })
+        },
+        getInfoOfOtherUser(users, info) {
+            const otherUser = users.find(user => user.email != this.currentUser.email);
+            if(info == 'profilePhoto')
+                return otherUser.profilePhotoUrl ? otherUser.profilePhotoUrl : require('@/assets/user_profile.jpg');
+
+            return otherUser[info];
         },
         getNameOfOtherUser(users) {
             const otherUser = users.find(user => user.email != this.currentUser.email);
@@ -156,9 +170,36 @@ export default {
                 current_chat_container.scrollTop = current_chat_container.scrollHeight;
             })
         },
-        // TODO: send new message
-        sendMessage() {
-            console.log("newMessage: ", this.newMessage)
+        async sendMessage() {
+            const message = {
+                transmitterEmail: this.currentUser.email,
+                receiverEmail: this.getInfoOfOtherUser(this.currentConversation.usersInfo, 'email'),
+                seen: false,
+                message: this.newMessage,
+                dateAndTime: new Date()
+            }
+            await this.addMessage(message);
+            this.newMessage = null;
+        },
+        addMessage(message) {
+            const method = this.currentConversationId ? 'PATCH' : 'POST';
+            let url = `/users/${this.currentUser.email}/conversations`;
+            if(this.currentConversationId)
+                url += `/${this.currentConversationId}`;
+            return new Promise(resolve => {
+                this.axios({
+                    method: method,
+                    url: url,
+                    data: message
+                })
+                .then(() => {
+                    // TODO: emit the conversation id so it will add the message to the correct conversation
+                    this.$socket.emit('sendMessage', message);
+                })
+                // TODO: add a warning on error
+                .catch(err => console.error(err))
+                .finally(() => resolve());
+            })
         }
     },
 }
