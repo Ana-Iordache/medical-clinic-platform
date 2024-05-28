@@ -118,7 +118,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #patient_info_container {
     background: url('../../assets/patients_list.jpg') no-repeat;
     background-size: cover;

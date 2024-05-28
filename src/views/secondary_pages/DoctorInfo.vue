@@ -85,7 +85,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #doctor_info_container {
     background: url('../../assets/doctors_list.jpg') no-repeat;
     background-size: cover;
