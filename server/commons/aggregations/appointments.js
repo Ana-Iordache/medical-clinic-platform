@@ -57,7 +57,7 @@ async function getAppointmentsForDoctor(email, date) {
 
   let stages;
 
-  // if we get the date as a parameter, we need the appointments from that spefici date that are not canceled
+  // if we get the date as a parameter, we need the appointments from that specific date that are not canceled
   // in order to set available hours for a new appointment
   if(date) {
     stages = [
