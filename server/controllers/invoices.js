@@ -15,7 +15,7 @@ async function getPaymentsOfUser(req, res) {
             "status": "$invoice.status",
             "service": "$invoice.service"
         }
-    );
+    ).sort({ "invoice.dateOfIssue": -1 });
 
     if (payments.length) {
         res.status(200).json(payments);
