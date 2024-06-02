@@ -252,11 +252,6 @@ export default {
 </script>
 
 <style scoped>
-.one_line_inputs {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-}
 
 .signup_button_section {
     margin: 5rem;

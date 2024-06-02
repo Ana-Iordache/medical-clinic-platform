@@ -1,13 +1,15 @@
 const generalMixin = {
     data: () => ({
         rules: {
-            requiredField: value => !!value.trim() || "This field is required.",
+            requiredField: value => !!(value && value.trim()) || "This field is required.",
             tenCharacters: value => value.length == 10 || "This field should be 10 charcaters long.",
             thirthteenCharacters: value => value.length == 13 || "This field should be 13 charcaters long.",
             password: value => (value.length >= 6 && value.search(/[a-z]/) >= 0 && value.search(/[A-Z]/) >= 0 && value.search(/[0-9]/) >= 0) || "Password is not valid."
         },
         dayOfWeeks: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        professionalDegrees: ["Medic generalist", "Medic rezident", "Medic specialist", "Medic primar", "Psiholog"],
+        specializations: []
     }),
     methods: {
         onlyNumbersInput(value) {
@@ -70,7 +72,19 @@ const generalMixin = {
             minutes = minutes.toString().padStart(2, '0');
 
             return `${hours}:${minutes}`;
-        }
+        },
+        async getSpecializations() {
+            const services = await this.loadServices();
+            const specializations = services.map(service => service.name);
+            return specializations;
+        },
+        loadServices() {
+            return new Promise(resolve => {
+                this.axios.get('/services')
+                    .then(response => resolve(response.data))
+                    .catch(() => resolve([]));
+            })
+        },
     }
 }
 

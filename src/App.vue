@@ -191,4 +191,12 @@ html {
 .hidden_element {
   visibility: hidden;
 }
+
+/* Forms */
+
+.one_line_inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
 </style>
