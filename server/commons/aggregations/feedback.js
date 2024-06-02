@@ -60,6 +60,124 @@ async function getFeedbackForDoctor(email) {
     ])
 }
 
+async function getRatingsOfDoctor(email) {
+  return await Appointments.aggregate([
+    {
+      $match: {
+        doctorEmail: email,
+        feedback: {
+          $exists: true
+        }
+      }
+    },
+    {
+      $project: {
+        roundedRating: {
+          $floor: "$feedback.rating"
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$roundedRating",
+        count: {
+          $sum: 1
+        }
+      }
+    },
+    {
+      $sort: {
+        _id: 1
+      }
+    },
+    {
+      $facet: {
+        existingRatings: [
+          {
+            $project: {
+              _id: 1,
+              count: 1
+            }
+          }
+        ],
+        allRatings: [
+          {
+            $project: {
+              ratings: [1, 2, 3, 4, 5]
+            }
+          },
+          {
+            $unwind: "$ratings"
+          },
+          {
+            $project: {
+              _id: "$ratings",
+              count: {
+                $literal: 0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        combined: {
+          $setUnion: [
+            "$existingRatings",
+            "$allRatings"
+          ]
+        }
+      }
+    },
+    {
+      $unwind: "$combined"
+    },
+    {
+      $group: {
+        _id: "$combined._id",
+        count: {
+          $sum: "$combined.count"
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalRatings: {
+          $sum: {
+            $multiply: ["$_id", "$count"]
+          }
+        },
+        totalCount: {
+          $sum: "$count"
+        },
+        ratings: {
+          $push: {
+            k: {
+              $toString: "$_id"
+            },
+            v: "$count"
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        averageRating: {
+          $divide: ["$totalRatings", "$totalCount"]
+        },
+        totalRatings: "$totalCount",
+        ratings: {
+          $arrayToObject: "$ratings"
+        }
+      }
+    }
+  ])
+}
+
 module.exports = {
-    getFeedbackForDoctor
+  getFeedbackForDoctor,
+  getRatingsOfDoctor
 }

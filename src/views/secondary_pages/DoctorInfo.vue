@@ -8,7 +8,7 @@
 
             <v-divider color="white" class="border-opacity-50 ma-2"></v-divider>
             
-            <div>
+            <!-- <div> -->
             <v-card class="mx-3 mt-5">
                 <div class="user_info_card">
                     <div class="profile_photo_section user_info_card_section">
@@ -18,7 +18,10 @@
                             <div> {{ userInfo.specialization }} </div>
                         </div>
                     </div>
+                    <!-- TODO: maybe split these sections in separate custom components -->
+                    <!-- TODO: check the cases when no schedule or review is found -->
                     <div class="info_section user_info_card_section">
+                        <!-- Schedule SECTION -->
                         <div class="text-subtitle-2 text-center"> Schedule </div>
                         <div class="d-flex flex-row text-center justify-center">
                             <ul class="me-2">
@@ -35,13 +38,58 @@
 
                         <v-divider class="my-2"></v-divider>
 
-                        <!-- TODO: get reviews in BE -->
+                        <!-- Reviews SECTION -->
                         <div class="text-subtitle-2 text-center"> Reviews </div>
+                        <div class="d-flex flex-row text-center ">
+                            <div class="d-flex flex-column text-center ratings_subsection">
+                                <div class="font-weight-bold"> {{ reviews.averageRating }} / 5</div>
+                                <div>({{ reviews.totalRatings }} ratings)</div>
+                                <v-rating
+                                    :model-value="reviews.averageRating"
+                                    half-increments
+                                    readonly
+                                    color="#4091BE"
+                                ></v-rating>
+                                <div class="font-weight-thin">
+                                    This is an average that reflects the scores given by patients following the interaction with the doctor during the consultation.
+                                </div>
+                            </div>
+                            <!-- <v-divider vertical></v-divider> -->
+                            <div class="d-flex flex-column text-center flex-grow-1">
+                                <v-list
+                                bg-color="transparent"
+                                class="d-flex flex-column-reverse"
+                                density="compact"
+                                >
+                                    <v-list-item v-for="(total, rating) in reviews.ratings" :key="rating">
+                                        <v-progress-linear
+                                            :model-value="total * 5"
+                                            color="#4091BE"
+                                            height="20"
+                                            rounded
+                                        ></v-progress-linear>
+
+                                        <template v-slot:prepend>
+                                            <span>{{ rating }}</span>
+                                            <v-icon class="mx-2" icon="mdi-star"></v-icon>
+                                        </template>
+
+                                        <template v-slot:append>
+                                            <div class="rating-values">
+                                                <span class="d-flex justify-end mx-2"> {{ total }} </span>
+                                            </div>
+                                        </template>
+                                    </v-list-item>
+                                </v-list>
+                                <div class="font-weight-thin font-italic">
+                                    <b>Note:</b> Ratings with decimal points (like 4.5) are rounded down to the nearest whole number (4) for consistency in our calculations.
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                
                 </div>
             </v-card>
-        </div>
+        <!-- </div> -->
         </div>
     </div>
 </template>
@@ -52,12 +100,14 @@ export default {
     name: 'DoctorInfo',
     mixins: [generalMixin],
     data: () => ({
-        userInfo: {}
+        userInfo: {},
+        reviews: {},
     }),
 
     async mounted() {
         const userId = this.$route.params.id;
         await this.loadUserInfo(userId);
+        await this.loadRatings(this.userInfo.email);
     },
 
     computed: {
@@ -81,6 +131,14 @@ export default {
                 .finally(() => resolve());
             })
         },
+        loadRatings(doctorEmail) {
+            return new Promise(resolve => {
+                this.axios.get(`/users/${doctorEmail}/feedback/ratings`)
+                .then(response => this.reviews = response.data)
+                .catch(error => console.error(error))
+                .finally(() => resolve());
+            })
+        }
     }
 }
 </script>
@@ -102,5 +160,9 @@ export default {
 
 .info_section ul {
     list-style: none;
+}
+
+.ratings_subsection {
+    flex-basis: 1rem;
 }
 </style>

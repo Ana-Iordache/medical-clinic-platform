@@ -28,6 +28,7 @@ router.get('/services', (req, res) => requestHandler(services.getAll, req, res))
 
 // Feedback
 router.get('/users/:userEmail/feedback', (req, res) => requestHandler(feedback.getMany, req, res));
+router.get('/users/:userEmail/feedback/ratings', (req, res) => requestHandler(feedback.getRatings, req, res));
 
 // Conversations
 router.get('/users/:userEmail/conversations', (req, res) => requestHandler(conversations.getMany, req, res));
