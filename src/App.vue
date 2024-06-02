@@ -163,7 +163,7 @@ html {
 .user_info_card {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   overflow: auto !important;
 }
 
