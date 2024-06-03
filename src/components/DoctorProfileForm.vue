@@ -56,6 +56,12 @@
             </div>
 
             <v-card class="column">
+                <v-avatar :image="profilePhoto" 
+                    size="250" 
+                    class="align-self-center pointer_on_hover mt-3"
+                    @click="triggerFileInput()"
+                ></v-avatar>
+                <input type="file" accept="image/*" @change="handleFileUpload" ref="upload_file_input" hidden>
                 <v-list>
                     <div class="d-flex justify-space-between mx-3">
                         <div class="v-label">Schedule</div>
@@ -119,7 +125,8 @@
 
 <script>
 import generalMixin from "@/commons/mixins";
-import { VTimePicker } from 'vuetify/labs/VTimePicker'
+import { VTimePicker } from 'vuetify/labs/VTimePicker';
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 export default {
     name: "DoctorProfileForm",
@@ -164,6 +171,9 @@ export default {
         },
         hasNotChosenAllData() {
             return !this.scheduleDialog.start || !this.scheduleDialog.end || !this.scheduleDialog.dayOfWeek;
+        },
+        profilePhoto() {
+            return this.editedData.profilePhotoUrl ? this.editedData.profilePhotoUrl : require('@/assets/user_profile.jpg')
         }
     },
     methods: {
@@ -220,6 +230,48 @@ export default {
             this.editedData.schedule[this.scheduleDialog.index].endHour = this.scheduleDialog.end;
 
             this.openScheduleDialog(false);
+        },
+
+        
+        triggerFileInput() {
+            this.$refs.upload_file_input.click();
+        },
+        async handleFileUpload(e) {
+            const file = e.target.files[0];
+            if(file) {
+                await this.uploadProfilePhoto(file);
+            }
+        },
+        uploadProfilePhoto(file) {
+            const storage = getStorage();
+
+            let fileRef = storageRef(storage, 'doctors-profile-pictures/' + file.name);
+            let uploadTask = uploadBytesResumable(fileRef, file);
+
+            return new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Observe state change events such as progress, pause, and resume
+                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        this.showLoadingDialog = progress != 100;
+                    },
+                    (error) => {
+                        console.error(error);
+                        reject(error);
+                    },
+                    async () => {
+                        // Handle successful uploads on complete
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            this.editedData.profilePhotoUrl = downloadURL;
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    }
+                );
+            })
         }
     }
 }
@@ -227,6 +279,8 @@ export default {
 
 <style scoped>
 .column {
+    display: flex;
+    flex-direction: column;
     flex-basis: 50%;
 }
 </style>
