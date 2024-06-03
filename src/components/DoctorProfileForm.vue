@@ -136,6 +136,7 @@
 import generalMixin from "@/commons/mixins";
 import { VTimePicker } from 'vuetify/labs/VTimePicker';
 import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { getAuth, updateEmail } from '@firebase/auth';
 
 export default {
     name: "DoctorProfileForm",
@@ -194,6 +195,10 @@ export default {
         async submitForm() {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
+                if(this.userData.email != this.editedData.email) {
+                    await this.updateUserEmail(this.editedData.email);
+                }
+
                await this.updateData();
             }
         },
@@ -215,6 +220,17 @@ export default {
                     }
                 })
                 .finally(() => resolve());
+            })
+        },
+        // TODO: firebase doesn't let me change an email if it hasn't been verified
+        async updateUserEmail(email) {
+            updateEmail(getAuth().currentUser, email)
+            .then(() =>{
+                // console.log("email updated")
+            })
+            .catch(() => {
+                // console.error("email couldn't be updated: ", error)
+                this.editedData.email = this.userData.email;
             })
         },
         handleOnlyNumbersInput(event, inputName) {
