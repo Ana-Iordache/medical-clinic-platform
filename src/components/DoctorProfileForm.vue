@@ -84,11 +84,8 @@
 
         <div class="d-flex flex-column">
             <v-btn type="submit" color="#4091BE" class="my-2">Save changes</v-btn>
-            <!-- TODO: change email and password -->
-            <div class="one_line_inputs">
-                <v-btn class="flex-grow-1">change email</v-btn>
-                <v-btn class="flex-grow-1">change password</v-btn>
-            </div>
+            <!-- TODO: change password -->
+            <v-btn class="flex-grow-1">change password</v-btn>
         </div>
     </v-form>
 
