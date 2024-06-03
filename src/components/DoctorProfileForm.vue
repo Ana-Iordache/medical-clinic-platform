@@ -60,6 +60,7 @@
                     size="250" 
                     class="align-self-center pointer_on_hover mt-3"
                     @click="triggerFileInput()"
+                    title="Click to change you profile picture"
                 ></v-avatar>
                 <input type="file" accept="image/*" @change="handleFileUpload" ref="upload_file_input" hidden>
                 <v-list>
@@ -121,6 +122,14 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="confirmation.show"
+        :timeout="4000" 
+        :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" 
+        elevation="24">
+        <v-icon>{{ confirmation.success ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
+        {{ confirmation.message }}
+    </v-snackbar>
 </template>
 
 <script>
@@ -150,6 +159,11 @@ export default {
             show: false,
             mode: ""
         },
+        confirmation: {
+            show: false,
+            success: true,
+            message: ""
+        }
     }),
     async mounted() {
         this.editedData = {
@@ -177,8 +191,31 @@ export default {
         }
     },
     methods: {
-        submitForm() {
-            console.log("save")
+        async submitForm() {
+            let formValidation = await this.$refs.form.validate();
+            if (formValidation.valid) {
+               await this.updateData();
+            }
+        },
+        updateData() {
+            return new Promise(resolve => {
+                this.axios.put(`/users/${this.userData._id}?role=doctor`, { data: this.editedData })
+                .then(response => {
+                    this.confirmation = {
+                        show: true,
+                        success: true,
+                        message: response.data.message
+                    }
+                })
+                .catch(error => {
+                    this.confirmation = {
+                        show: true,
+                        success: false,
+                        message: error.response.data.message
+                    }
+                })
+                .finally(() => resolve());
+            })
         },
         handleOnlyNumbersInput(event, inputName) {
             this.editedData[inputName] = this.onlyNumbersInput(event.target.value);

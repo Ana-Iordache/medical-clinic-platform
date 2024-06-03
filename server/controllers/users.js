@@ -87,8 +87,43 @@ async function getOne(req, res) {
     }
 }
 
+// PUT /users/:userId
+async function updateOne(req, res) {
+    const userId = req.params.userId;
+    const data = req.body.data;
+    const user = await Users.findById(userId);
+    
+    if(user) {
+        user.phoneNumber = "4" + data.phoneNumber;
+        user.profilePhotoUrl = data.profilePhotoUrl;
+        user.firstName = data.firstName;
+        user.lastName = data.lastName;
+
+        if(user.role == 'doctor') {
+            user.schedule.length = 0;
+            user.schedule = data.schedule;
+            user.specialization = data.specialization;
+            user.professionalDegree = data.professionalDegree;
+        } 
+        // TODO: add else for patient
+ 
+        const userUpdated = await user.save();
+        if(userUpdated) {
+            console.log("User updated: ", userUpdated);
+            return res.status(200).json({ message: "Data updated successfully." });
+        } else {
+            console.log("Failed to update user: ", err);
+            return res.status(500).json({ message: "Failed to update data." });
+        }
+
+    } else {
+        return res.status(404).json({ message: "User not found." });
+    }
+}
+
 module.exports = {
     add,
     getMany,
     getOne,
+    updateOne
 }

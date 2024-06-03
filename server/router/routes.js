@@ -11,6 +11,7 @@ const stripePayments = require('./../controllers/stripePayments');
 
 // Users
 router.post('/users', (req, res) => requestHandler(users.add, req, res));
+router.put('/users/:userId', (req, res) => requestHandler(users.updateOne, req, res));
 router.get('/users', (req, res) => requestHandler(users.getMany, req, res));
 router.get('/users/:userInfo', (req, res) => requestHandler(users.getOne, req, res));
 
