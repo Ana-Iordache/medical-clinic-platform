@@ -104,8 +104,12 @@ async function updateOne(req, res) {
             user.schedule = data.schedule;
             user.specialization = data.specialization;
             user.professionalDegree = data.professionalDegree;
-        } 
-        // TODO: add else for patient
+        } else if(user.role == 'patient') {
+            user.address = data.address;
+            user.height = data.height;
+            user.weight = data.weight;
+            user.bloodType = data.bloodType;
+        }
  
         const userUpdated = await user.save();
         if(userUpdated) {

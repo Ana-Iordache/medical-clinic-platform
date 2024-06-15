@@ -47,3 +47,6 @@ export default {
     height: 100vh;
 }
 </style>
+
+<!-- TODO: check the validations on inputs
+TODO: maybe I should move the commons methods of children here, and just emit events from them -->
