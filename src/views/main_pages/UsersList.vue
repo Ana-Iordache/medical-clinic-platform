@@ -62,10 +62,11 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
 import UserCard from "@/components/UserCard.vue";
+import generalMixin from "@/commons/mixins";
 
 export default {
     name: 'UsersList',
-
+    mixins: [generalMixin],
     components: {
         UserCard
     },
@@ -135,7 +136,13 @@ export default {
             return new Promise(resolve => {
                 this.axios.get(url)
                     .then(response => response.data)
-                    .then(data => this.usersList = data)
+                    .then(data => {
+                        this.usersList = data.map(user => ({
+                            ...user,
+                            phoneNumber: user.phoneNumber ? user.phoneNumber.toString().substring(1) : null,
+                            lastAppointment: user.lastAppointment ? this.getDateStringFromDate(this.parseDateAndTimeString(user.lastAppointment)) : null
+                        }))
+                    })
                     .catch(error => console.error(error))
                     .finally(() => resolve());
             })
