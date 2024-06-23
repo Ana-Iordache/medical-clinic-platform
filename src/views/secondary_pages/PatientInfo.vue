@@ -39,12 +39,11 @@
                             </v-list>
                         </div>
 
-                        <!-- TODO: identity and health card -->
                         <div class="d-flex flex-row justify-space-around flex-grow-1">
-                            <v-btn variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadCard('health')">
+                            <v-btn :disabled="!userInfo.healthCardUrl" variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadCard('healthCard')">
                                 Health card
                             </v-btn>
-                            <v-btn variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadCard('identity')">
+                            <v-btn :disabled="!userInfo.identityCardUrl" variant="tonal" color="#4091BE" append-icon="mdi mdi-download" @click="downloadCard('identityCard')">
                                 Identity card
                             </v-btn>
                         </div>
@@ -112,7 +111,12 @@ export default {
             })
         },
         downloadCard(type) {
-            console.log(`TODO download ${type} card`)
+            const downloadLink = document.createElement('a');
+            downloadLink.href = this.userInfo[`${type}Url`];
+            downloadLink.setAttribute('download', '');
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         }
     }
 }

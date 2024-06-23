@@ -63,7 +63,7 @@
                         @click="triggerFileInput()"
                         title="Click to change you profile picture"
                     ></v-avatar>
-                    <input type="file" accept="image/*" @change="handleFileUpload" ref="upload_file_input" hidden>
+                    <input type="file" accept="image/*" @change="handleFileUpload($event, 'profilePhoto')" ref="upload_file_input" hidden>
                 </v-card>
                 <v-text-field
                     v-model="editedData.height"
@@ -89,6 +89,25 @@
             </div>
         </div>
 
+        <div class="d-flex">
+            <v-file-input
+                variant="solo"
+                prepend-inner-icon="mdi-paperclip"
+                prepend-icon=""
+                class="me-3"
+                label="Health card"
+                accept=".pdf"
+                @change="handleFileUpload($event, 'healthCard')">
+            </v-file-input>
+            <v-file-input
+                variant="solo"
+                prepend-inner-icon="mdi-paperclip"
+                prepend-icon=""
+                label="Identity card"
+                accept=".pdf"
+                @change="handleFileUpload($event, 'identityCard')">
+            </v-file-input>
+        </div>
 
         <div class="d-flex flex-column">
             <v-btn type="submit" color="#4091BE" class="my-2">Save changes</v-btn>
@@ -194,16 +213,29 @@ export default {
         triggerFileInput() {
             this.$refs.upload_file_input.click();
         },
-        async handleFileUpload(e) {
+        async handleFileUpload(e, type) {
             const file = e.target.files[0];
             if(file) {
-                await this.uploadProfilePhoto(file);
+                await this.uploadFile(file, type);
             }
         },
-        uploadProfilePhoto(file) {
+        uploadFile(file, type) {
             const storage = getStorage();
 
-            let fileRef = storageRef(storage, 'patients-profile-pictures/' + file.name);
+            let url;
+            switch(type) {
+                case 'profilePhoto':
+                    url = 'patients-profile-pictures';
+                    break;
+                case 'healthCard':
+                    url = 'patients-health-cards';
+                    break;
+                case 'identityCard':
+                    url = 'patients-identity-cards';
+                    break;
+            }
+
+            let fileRef = storageRef(storage, `${url}/${file.name}`);
             let uploadTask = uploadBytesResumable(fileRef, file);
 
             return new Promise((resolve, reject) => {
@@ -222,7 +254,8 @@ export default {
                         // Handle successful uploads on complete
                         try {
                             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            this.editedData.profilePhotoUrl = downloadURL;
+                            console.log(`${type}Url`)
+                            this.editedData[`${type}Url`] = downloadURL;
                             resolve();
                         } catch (error) {
                             reject(error);

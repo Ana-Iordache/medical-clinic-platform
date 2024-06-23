@@ -96,6 +96,8 @@ async function updateOne(req, res) {
     if(user) {
         user.phoneNumber = "4" + data.phoneNumber;
         user.profilePhotoUrl = data.profilePhotoUrl;
+        user.healthCardUrl = data.healthCardUrl;
+        user.identityCardUrl = data.identityCardUrl;
         user.firstName = data.firstName;
         user.lastName = data.lastName;
 

@@ -95,7 +95,19 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: false,
         trim: true
-    }
+    },
+    healthCardUrl: {
+        type: String,
+        required: false,
+        trim: true,
+        default: ""
+    },
+    identityCardUrl: {
+        type: String,
+        required: false,
+        trim: true,
+        default: ""
+    },
 })
 
 const Users = mongoose.model('Users', userSchema);
