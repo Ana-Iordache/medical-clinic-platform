@@ -2,26 +2,39 @@
     <div id="payments_container" class="page_container">
         <div class="text-h4 page_title"> Payments </div>
         <div class="page_content_overlay">
-            <v-toolbar color="transparent" class="px-4">
-                <v-select v-model="selectedFilter" 
-                    :items="filterStatuses"
-                    variant="solo"
-                    max-width="200px"
-                    hide-details
-                    density="comfortable"
-                    >
-                </v-select>
-                <v-text-field
-                    v-model="search"
-                    density="comfortable"
-                    placeholder="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    max-width="300px"
-                    variant="solo"
-                    clearable
-                    hide-details
-                ></v-text-field>
-            </v-toolbar>
+            <div class="d-flex flex-row justify-space-between">
+                <v-toolbar color="transparent" class="px-4">
+                    <div >
+                        <v-select v-model="selectedFilter" 
+                            :items="filterStatuses"
+                            variant="solo"
+                            max-width="200px"
+                            hide-details
+                            density="comfortable"
+                            >
+                        </v-select>
+                    </div>
+                    <div class="d-flex align-center">
+                        <v-btn 
+                            class="me-2" 
+                            variant="outlined" 
+                            append-icon="mdi-chart-bar" 
+                            color="#4091BE" 
+                            @click="openReportDialog(true)"
+                        >View report</v-btn>
+                        <v-text-field
+                            v-model="search"
+                            density="comfortable"
+                            placeholder="Search"
+                            prepend-inner-icon="mdi-magnify"
+                            width="300px"
+                            variant="solo"
+                            clearable
+                            hide-details
+                        ></v-text-field>
+                    </div>
+                </v-toolbar>
+            </div>
 
             <v-divider color="white" class="border-opacity-50 ma-2"></v-divider>
 
@@ -70,6 +83,16 @@
         </div>
     </div>
 
+    <!-- TODO: the height needs to be adjusted -->
+    <v-dialog v-model="showReportDialog" max-width="80%">
+        <v-card color="white" class="pa-4">
+            <MonthlyDataBarChart 
+                :title="'Monthly payments'"
+                :typeOfData="'payments'">
+            </MonthlyDataBarChart>
+        </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="confirmation.show"
         :timeout="4000" 
         :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" 
@@ -83,11 +106,13 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
 import PaymentCard from '@/components/PaymentCard.vue';
+import MonthlyDataBarChart from '@/components/MonthlyDataBarChart.vue';
 
 export default {
     name: 'PaymentsPage',
     components: {
-        PaymentCard
+        PaymentCard,
+        MonthlyDataBarChart
     },
     data: () => ({
         filterStatuses: [ "All", "Paid", "Unpaid", "Canceled" ],
@@ -98,7 +123,8 @@ export default {
             show: false,
             success: true,
             message: ""
-        }
+        },
+        showReportDialog: false,
     }),
     async mounted() {
         if(this.currentUserConnected)
@@ -156,6 +182,9 @@ export default {
             const queryParams = { ...this.$route.query };
             delete queryParams[queryParam];
             this.$router.replace({ query: queryParams });
+        },
+        openReportDialog(show) {
+            this.showReportDialog = show;
         }
     }
 }
