@@ -7,6 +7,7 @@ const services = require('./../controllers/services');
 const invoices = require('./../controllers/invoices');
 const feedback = require('./../controllers/feedback');
 const conversations = require('./../controllers/conversations');
+const earnings = require('./../controllers/earnings');
 const stripePayments = require('./../controllers/stripePayments');
 
 // Users
@@ -35,6 +36,9 @@ router.get('/users/:userEmail/feedback/ratings', (req, res) => requestHandler(fe
 router.get('/users/:userEmail/conversations', (req, res) => requestHandler(conversations.getMany, req, res));
 router.post('/users/:userEmail/conversations', (req, res) => requestHandler(conversations.addOne, req, res));
 router.patch('/users/:userEmail/conversations/:conversationId', (req, res) => requestHandler(conversations.updateOne, req, res));
+
+// Earnings
+router.get('/users/:userEmail/earnings', (req, res) => requestHandler(earnings.getMany, req, res));
 
 // Stripe payments
 router.get('/success', (req, res) => requestHandler(stripePayments.successPayment, req, res))
