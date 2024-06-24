@@ -1,10 +1,11 @@
 const Appointments = require('../../models/Appointments');
 
-async function getEarningsForDoctor(email) {
+async function getReportDataForUser(email, typeOfReport) {
+    const typeOfEmail = typeOfReport == 'earnings' ? 'doctorEmail' : 'patientEmail';
     return await Appointments.aggregate([
         {
             $match: {
-                doctorEmail: email,
+                [typeOfEmail]: email,
                 "invoice.status": "paid"
             }
         },
@@ -58,5 +59,5 @@ async function getEarningsForDoctor(email) {
 }
 
 module.exports = {
-    getEarningsForDoctor
+    getReportDataForUser
 }
