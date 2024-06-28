@@ -54,6 +54,11 @@ async function getReportDataForUser(email, typeOfReport) {
                 totalPerMonth: "$months",
                 total: "$totalAmount"
             }
+        },
+        {
+            $sort: {
+                year: 1
+            }
         }
     ])
 }
