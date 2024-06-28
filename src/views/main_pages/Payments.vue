@@ -83,13 +83,15 @@
         </div>
     </div>
 
-    <!-- TODO: the height needs to be adjusted -->
-    <v-dialog v-model="showReportDialog" max-width="80%">
-        <v-card color="white" class="pa-4">
+    <v-dialog v-model="showReportDialog" max-width="80%" height="100%">
+        <v-card color="white" class="pa-4" height="100%">
             <MonthlyDataBarChart 
                 :title="'Monthly payments'"
                 :typeOfData="'payments'">
             </MonthlyDataBarChart>
+            <v-card-actions>
+                <v-btn variant="tonal" text="Close" @click="openReportDialog(false)"></v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
 
