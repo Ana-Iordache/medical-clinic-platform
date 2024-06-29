@@ -8,6 +8,7 @@ const invoices = require('./../controllers/invoices');
 const feedback = require('./../controllers/feedback');
 const conversations = require('./../controllers/conversations');
 const earnings = require('../controllers/reports');
+const homeDashboard = require('../controllers/homeDashboard');
 const stripePayments = require('./../controllers/stripePayments');
 
 // Users
@@ -39,6 +40,9 @@ router.patch('/users/:userEmail/conversations/:conversationId', (req, res) => re
 
 // Reports
 router.get('/users/:userEmail/report', (req, res) => requestHandler(earnings.getMany, req, res));
+
+// Home dashboard
+router.get('/users/:userEmail/homedashboard', (req, res) => requestHandler(homeDashboard.getReport, req, res));
 
 // Stripe payments
 router.get('/success', (req, res) => requestHandler(stripePayments.successPayment, req, res))

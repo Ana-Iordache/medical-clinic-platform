@@ -112,7 +112,132 @@ async function getAppointmentsForDoctor(email, date) {
   return await Appointments.aggregate(stages);
 }
 
+async function getTotalVisitsPerDoctor() {
+  return await Appointments.aggregate([
+    {
+      $match: {
+        status: "honored"
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "doctorEmail",
+        foreignField: "email",
+        as: "doctorInfo"
+      }
+    },
+    {
+      $unwind: "$doctorInfo"
+    },
+    {
+      $group: {
+        _id: "$doctorEmail",
+        totalVisits: {
+          $sum: 1
+        },
+        doctorFullName: {
+          $first: {
+            $concat: [
+              "$doctorInfo.firstName",
+              " ",
+              "$doctorInfo.lastName"
+            ]
+          }
+        },
+        specialization: {
+          $first: "$doctorInfo.specialization"
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        totalVisits: 1,
+        doctor: "$doctorFullName",
+        specialization: 1
+      }
+    },
+    {
+      $sort: {
+        totalVisits: -1
+      }
+    }
+  ])
+}
+
+async function getTotalPerStatusOfUser(userEmail, userRole, groupingField) {
+  const emailProperty = `${userRole}Email`;
+  const groupProperty = groupingField == 'appointments' ? '$status' : '$invoice.status';
+  return await Appointments.aggregate([
+    {
+      $match: {
+        [emailProperty]: userEmail
+      }
+    },
+    {
+      $group: {
+        _id: groupProperty,
+        total: {
+          $sum: 1
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        status: "$_id",
+        total: 1
+      }
+    }
+  ]);
+}
+
+async function getNextAppointmentOfUser(userEmail, userRole) {
+  const emailProperty = `${userRole}Email`;
+  return await Appointments.aggregate([
+    {
+      $match: {
+        [emailProperty]: userEmail,
+        dateAndTime: {
+          $gte: new Date()
+        }
+      }
+    },
+    {
+      $sort: {
+        dateAndTime: 1
+      }
+    },
+    {
+      $limit: 1
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "doctorEmail",
+        foreignField: "email",
+        as: "doctorDetails"
+      }
+    },
+    {
+      $unwind: "$doctorDetails"
+    },
+    {
+      $project: {
+        _id: 0,
+        dateAndTime: 1,
+        specialization:
+          "$doctorDetails.specialization"
+      }
+    }
+  ]);
+}
+
 module.exports = {
     getAppointmentsForPatient,
-    getAppointmentsForDoctor
+    getAppointmentsForDoctor,
+    getTotalVisitsPerDoctor,
+    getTotalPerStatusOfUser,
+    getNextAppointmentOfUser
 }
