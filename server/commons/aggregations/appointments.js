@@ -136,14 +136,11 @@ async function getTotalVisitsPerDoctor() {
         totalVisits: {
           $sum: 1
         },
-        doctorFullName: {
-          $first: {
-            $concat: [
-              "$doctorInfo.firstName",
-              " ",
-              "$doctorInfo.lastName"
-            ]
-          }
+        doctorFirstName: {
+          $first: "$doctorInfo.firstName"
+        },
+        doctorLastName: {
+          $first: "$doctorInfo.lastName"
         },
         specialization: {
           $first: "$doctorInfo.specialization"
@@ -154,7 +151,8 @@ async function getTotalVisitsPerDoctor() {
       $project: {
         _id: 0,
         totalVisits: 1,
-        doctor: "$doctorFullName",
+        doctorFirstName: "$doctorFirstName",
+        doctorLastName: "$doctorLastName",
         specialization: 1
       }
     },

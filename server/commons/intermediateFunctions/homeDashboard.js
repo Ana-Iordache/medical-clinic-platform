@@ -9,7 +9,8 @@ async function getTopAppreciatedDoctors(top) {
         let ratings = await getRatingsOfDoctor(doctor.email);
         if(ratings.length > 0) {
             ratingsPerDoctor.push({
-                doctor: `${doctor.firstName} ${doctor.lastName}`,
+                doctorFirstName: doctor.firstName,
+                doctorLastName: doctor.lastName,
                 specialization: doctor.specialization,
                 rating: ratings[0].averageRating
             })
