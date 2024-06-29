@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import MonthlyDataBarChart from '@/components/MonthlyDataBarChart.vue';
+import MonthlyDataBarChart from '@/components/charts/MonthlyDataBarChart.vue';
 export default {
     name: 'EarningsPage',
     components: {

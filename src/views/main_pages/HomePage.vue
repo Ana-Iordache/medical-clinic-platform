@@ -30,7 +30,7 @@
 <script>
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
-import NumericalDataBarChart from '@/components/NumericalDataBarChart.vue'
+import NumericalDataBarChart from '@/components/charts/NumericalDataBarChart.vue'
 
 export default {
     name: 'HomePage',

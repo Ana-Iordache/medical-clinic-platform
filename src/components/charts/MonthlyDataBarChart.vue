@@ -40,7 +40,7 @@
 
 <script>
 import generalMixin from "@/commons/mixins";
-import BaseBarChart from '@/components/BaseBarChart.vue';
+import BaseBarChart from '@/components/charts/BaseBarChart.vue';
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '@/pinia_stores/authenticationStore';
 export default {

@@ -9,7 +9,7 @@
 
  <!-- TODO: this component needs to be more generic -->
 <script>
-import BaseBarChart from '@/components/BaseBarChart.vue';
+import BaseBarChart from '@/components/charts/BaseBarChart.vue';
 export default {
     name: "NumericalDataBarChart",
     components: {
