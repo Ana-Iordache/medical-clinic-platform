@@ -1,5 +1,6 @@
 <template>
     <div class="chart_wrapper">
+        <div class="text-subtitle-2 text-center">{{ title }}</div>
         <Bar :options="options" :data="chartData"></Bar>
     </div>
 </template>
@@ -25,7 +26,11 @@ export default {
             required: true
         },
         title: {
-            tyoe: String,
+            type: String,
+            required: true
+        },
+        labelTitle: {
+            type: String,
             required: true
         }
     },
@@ -40,7 +45,7 @@ export default {
             return {
                 labels: this.labels,
                 datasets: [{
-                    label: this.title,
+                    label: this.labelTitle,
                     data: this.data,
                     borderColor: 'rgb(54, 162, 235)',
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
