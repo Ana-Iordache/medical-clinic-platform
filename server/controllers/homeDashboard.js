@@ -21,7 +21,7 @@ async function getReport(req, res) {
             topVisitedDoctors: topVisitedDoctors,
             totalAppointmentsPerStatus: totalAppointmentsPerStatus,
             totalPaymentsPerStatus: totalPaymentsPerStatus,
-            nextAppointment: nextAppointment
+            nextAppointment: nextAppointment[0]
         }
     }
 

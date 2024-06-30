@@ -4,8 +4,22 @@
             Hello, {{ currentUserFullName }} 👋🏼
         </div>
         <div class="page_content_overlay">
-            <div class="d-flex flex-row h-100">
-                <div class="bar_chart">
+            <div class="pa-4">
+                <v-card>
+                    <v-card-title>Your next appointment:</v-card-title>
+                    <v-card-text> {{ nextAppointment }} </v-card-text>
+                    <v-card-actions class="d-flex justify-end">
+                        <v-btn 
+                            append-icon="mdi-calendar-search"
+                            variant="outlined"
+                            color="#4091BE"
+                            @click="redirectToAppointments()"
+                        >See all future appointments</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+            <div class="d-flex flex-row h-50 pt-4">
+                <div class="chart_area">
                     <NumericalDataBarChart
                         :title="'Top 5 appreciated doctors'"
                         :data="dashboardData.topAppreciatedDoctors"
@@ -14,13 +28,29 @@
                     </NumericalDataBarChart>
                 </div>
 
-                <div class="bar_chart">
+                <div class="chart_area">
                     <NumericalDataBarChart
                         :title="'Top 5 most visited doctors'"
                         :data="dashboardData.topVisitedDoctors"
                         :labelTitle="'Visits'"
                         :typeOfData="'totalVisits'">
                     </NumericalDataBarChart>
+                </div>
+            </div>
+            <div class="d-flex flex-row h-50">
+                <div class="chart_area">
+                    <BasePieChart
+                        :title="'Total appointments per status'"
+                        :data="getPieChartData('totalAppointmentsPerStatus')"
+                        :labels="getPieChartLabels('totalAppointmentsPerStatus')">
+                    </BasePieChart>
+                </div>
+                <div class="chart_area">
+                    <BasePieChart
+                        :title="'Total payments per status'"
+                        :data="getPieChartData('totalPaymentsPerStatus')"
+                        :labels="getPieChartLabels('totalPaymentsPerStatus')">
+                    </BasePieChart>
                 </div>
             </div>
         </div>
@@ -31,12 +61,16 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '../../pinia_stores/authenticationStore';
 import NumericalDataBarChart from '@/components/charts/NumericalDataBarChart.vue'
+import BasePieChart from '@/components/charts/BasePieChart.vue'
+import generalMixin from '@/commons/mixins';
 
 export default {
     name: 'HomePage',
     components: {
-        NumericalDataBarChart
+        NumericalDataBarChart,
+        BasePieChart
     },
+    mixins: [generalMixin],
 
     data: () => ({
         dashboardData: {}
@@ -51,6 +85,12 @@ export default {
         ...mapStores(useAuthenticationStore),
         currentUserFullName() {
             return `${this.authenticationStore.user.firstName} ${this.authenticationStore.user.lastName}`;
+        },
+        nextAppointment() {
+            if(!this.dashboardData.nextAppointment) 
+                return "None";
+            const dateAndTime = this.dashboardData.nextAppointment.dateAndTime;
+            return `${this.getDateStringFromDate(this.parseDateAndTimeString(dateAndTime))}  ${this.formatTimeFromDate(this.parseDateAndTimeString(dateAndTime), true)} (${this.dashboardData.nextAppointment.specialization})`;
         }
     },
     watch: {
@@ -68,13 +108,22 @@ export default {
                 .catch(error => console.error(error))
                 .finally(() => resolve());
             })
+        },
+        getPieChartData(property) {
+            return this.dashboardData[property] ? this.dashboardData[property].map(item => item.total) : [];
+        },
+        getPieChartLabels(property) {
+            return this.dashboardData[property] ? this.dashboardData.totalAppointmentsPerStatus.map(item => item.status) : [];
+        },
+        redirectToAppointments() {
+            this.$router.push({ path: '/appointments' });
         }
     }
 }
 </script>
 
 <style scoped>
-.bar_chart {
+.chart_area {
     flex-basis: 100%;
 }
 </style>
