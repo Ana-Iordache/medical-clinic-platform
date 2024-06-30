@@ -113,7 +113,7 @@ export default {
             return this.dashboardData[property] ? this.dashboardData[property].map(item => item.total) : [];
         },
         getPieChartLabels(property) {
-            return this.dashboardData[property] ? this.dashboardData.totalAppointmentsPerStatus.map(item => item.status) : [];
+            return this.dashboardData[property] ? this.dashboardData[property].map(item => item.status) : [];
         },
         redirectToAppointments() {
             this.$router.push({ path: '/appointments' });
