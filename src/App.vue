@@ -199,4 +199,13 @@ html {
   flex-direction: row;
   gap: 1rem;
 }
+
+/* Charts */
+.chart_wrapper {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #c5c5c5;
+  border-radius: .5rem;
+  margin: 0 1rem;
+  height: 80%;
+}
 </style>

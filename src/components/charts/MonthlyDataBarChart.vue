@@ -35,6 +35,7 @@
         :data="barChartData"
         :labels="months"
         :title="title"
+        :labelTitle="'Amount'"
     ></BaseBarChart>
 </template>
 

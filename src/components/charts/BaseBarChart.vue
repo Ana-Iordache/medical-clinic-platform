@@ -1,6 +1,5 @@
 <template>
     <div class="chart_wrapper">
-        <div class="text-subtitle-2 text-center">{{ title }}</div>
         <Bar :options="options" :data="chartData"></Bar>
     </div>
 </template>
@@ -34,12 +33,6 @@ export default {
             required: true
         }
     },
-    data: () => ({
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        },
-    }),
     computed: {
         chartData() {
             return {
@@ -54,17 +47,22 @@ export default {
                     borderSkipped: false,
                 }]
             }
+        },
+        options() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'left',
+                    },
+                    title: {
+                        display: true,
+                        text: this.title
+                    }
+                }
+            }
         }
     }
 }
 </script>
-
-<style scoped>
-.chart_wrapper {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #c5c5c5;
-    border-radius: .5rem;
-    margin: 0 1rem;
-    height: 80%;
-}
-</style>
