@@ -1,5 +1,5 @@
 const Users = require("./../models/Users")
-const { getTopAppreciatedDoctors, getTopVisitedDoctors } = require("../commons/intermediateFunctions/homeDashboard")
+const { getTopAppreciatedDoctors, getTopVisitedDoctors, getTotalPatientsOfDoctor } = require("../commons/intermediateFunctions/homeDashboard")
 const { getTotalPerStatusOfUser, getNextAppointmentOfUser } = require("../commons/aggregations/appointments")
 
 // GET /users/:userEmail/homedashboard
@@ -26,7 +26,8 @@ async function getReport(req, res) {
         homeDashboardObj.topAppreciatedDoctors = topAppreciatedDoctors;
         homeDashboardObj.topVisitedDoctors = topVisitedDoctors;
     } else if(userRole =='doctor') {
-
+        let totalPatients  = await getTotalPatientsOfDoctor(userEmail);
+        homeDashboardObj.totalPatients = totalPatients[0].totalPatients;
     }
 
     res.status(200).json(homeDashboardObj);

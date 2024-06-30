@@ -1,6 +1,6 @@
 const Users = require("./../../models/Users")
 const { getRatingsOfDoctor } = require("./../../commons/aggregations/feedback")
-const { getTotalVisitsPerDoctor } = require("./../../commons/aggregations/appointments")
+const { getTotalVisitsPerDoctor, countPatientsOfDoctor } = require("./../../commons/aggregations/appointments")
 
 async function getTopAppreciatedDoctors(top) {
     let ratingsPerDoctor = [];
@@ -33,7 +33,13 @@ async function getTopVisitedDoctors(top) {
     return totalVisitsPerDoctor.slice(0, top);
 }
 
+async function getTotalPatientsOfDoctor(userEmail) {
+    let totalPatientsOfDoctor = await countPatientsOfDoctor(userEmail);
+    return totalPatientsOfDoctor;
+}
+
 module.exports = {
     getTopAppreciatedDoctors,
-    getTopVisitedDoctors
+    getTopVisitedDoctors,
+    getTotalPatientsOfDoctor
 }

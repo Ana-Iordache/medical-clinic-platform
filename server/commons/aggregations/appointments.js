@@ -232,10 +232,29 @@ async function getNextAppointmentOfUser(userEmail, userRole) {
   ]);
 }
 
+async function countPatientsOfDoctor(userEmail) {
+  return await Appointments.aggregate([
+    {
+      $match: {
+        doctorEmail: userEmail
+      }
+    },
+    {
+      $group: {
+        _id: "$patientEmail"
+      }
+    },
+    {
+      $count: "totalPatients"
+    }
+  ])
+}
+
 module.exports = {
     getAppointmentsForPatient,
     getAppointmentsForDoctor,
     getTotalVisitsPerDoctor,
     getTotalPerStatusOfUser,
-    getNextAppointmentOfUser
+    getNextAppointmentOfUser,
+    countPatientsOfDoctor
 }

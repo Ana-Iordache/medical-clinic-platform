@@ -18,8 +18,8 @@
                     </v-card-actions>
                 </v-card>
             </div>
-            <div class="d-flex flex-row h-50 pt-4">
-                <div class="chart_area">
+            <div v-if="authenticationStore.user.role == 'patient'" class="d-flex flex-row h-50 pt-4">
+                <div class="one_row_area">
                     <NumericalDataBarChart
                         :title="'Top 5 appreciated doctors'"
                         :data="dashboardData.topAppreciatedDoctors"
@@ -28,7 +28,7 @@
                     </NumericalDataBarChart>
                 </div>
 
-                <div class="chart_area">
+                <div class="one_row_area">
                     <NumericalDataBarChart
                         :title="'Top 5 most visited doctors'"
                         :data="dashboardData.topVisitedDoctors"
@@ -37,15 +37,27 @@
                     </NumericalDataBarChart>
                 </div>
             </div>
+            
+            <div v-else class="d-flex flex-row pa-4">
+                <v-card class="me-2 one_row_area">
+                    <v-card-title>Total appointments:</v-card-title>
+                    <v-card-text> {{ totalAppointments }} </v-card-text>
+                </v-card>
+                <v-card class="one_row_area">
+                    <v-card-title>Total patients:</v-card-title>
+                    <v-card-text> {{ totalPatients }} </v-card-text>
+                </v-card>
+            </div>
+
             <div class="d-flex flex-row h-50">
-                <div class="chart_area">
+                <div class="one_row_area">
                     <BasePieChart
                         :title="'Total appointments per status'"
                         :data="getPieChartData('totalAppointmentsPerStatus')"
                         :labels="getPieChartLabels('totalAppointmentsPerStatus')">
                     </BasePieChart>
                 </div>
-                <div class="chart_area">
+                <div class="one_row_area">
                     <BasePieChart
                         :title="'Total payments per status'"
                         :data="getPieChartData('totalPaymentsPerStatus')"
@@ -91,6 +103,16 @@ export default {
                 return "None";
             const dateAndTime = this.dashboardData.nextAppointment.dateAndTime;
             return `${this.getDateStringFromDate(this.parseDateAndTimeString(dateAndTime))}  ${this.formatTimeFromDate(this.parseDateAndTimeString(dateAndTime), true)} (${this.dashboardData.nextAppointment.specialization})`;
+        },
+        totalAppointments() {
+            if(!this.dashboardData.totalAppointmentsPerStatus)
+                return 0;
+            return this.dashboardData.totalAppointmentsPerStatus.map(item => item.total).reduce((sum, total) => sum + total, 0);
+        },
+        totalPatients() {
+            if(!this.dashboardData.totalPatients)
+                return 0;
+            return this.dashboardData.totalPatients;
         }
     },
     watch: {
@@ -123,7 +145,7 @@ export default {
 </script>
 
 <style scoped>
-.chart_area {
+.one_row_area {
     flex-basis: 100%;
 }
 </style>
