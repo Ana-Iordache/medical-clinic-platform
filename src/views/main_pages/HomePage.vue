@@ -1,5 +1,5 @@
 <template>
-    <div class="page_container">
+    <div id="home_container" class="page_container">
         <div v-if="authenticationStore.user" class="text-h4 page_title">
             Hello, {{ currentUserFullName }} 👋🏼
         </div>
@@ -145,6 +145,11 @@ export default {
 </script>
 
 <style scoped>
+#home_container {
+    background: url('../../assets/home_dashboard.jpg') no-repeat;
+    background-size: cover;
+    height: 100vh;
+}
 .one_row_area {
     flex-basis: 100%;
 }
