@@ -39,7 +39,7 @@
             </div>
             
             <div v-else class="d-flex flex-row pa-4">
-                <v-card class="me-2 one_row_area">
+                <v-card class="me-4 one_row_area">
                     <v-card-title>Total appointments:</v-card-title>
                     <v-card-text> {{ totalAppointments }} </v-card-text>
                 </v-card>
