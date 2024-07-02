@@ -31,6 +31,11 @@ async function getAppointmentsForPatient(email) {
             doctorProfessionalDegree: "$doctorDetails.professionalDegree",
             specialization: "$doctorDetails.specialization"
           }
+        },
+        {
+          $sort: {
+            dateAndTime: 1
+          }
         }
     ])
 }
@@ -52,6 +57,11 @@ async function getAppointmentsForDoctor(email, date) {
     },
     {
       $unwind: "$patientDetails"
+    },
+    {
+      $sort: {
+        dateAndTime: 1
+      }
     }
   ]
 
